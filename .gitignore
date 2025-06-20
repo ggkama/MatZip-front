@@ -18,4 +18,8 @@ build/
 Thumbs.db
 
 application-private.yml
+<<<<<<< HEAD
 .vscode/*2
+=======
+.vscode/*
+>>>>>>> ad816b0a64a5b46351add3094705b1d1f17a312d

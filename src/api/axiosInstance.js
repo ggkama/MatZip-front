@@ -1,6 +1,9 @@
 import axios from "axios";
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ad816b0a64a5b46351add3094705b1d1f17a312d
 const API_URL = window.ENV?.API_URL;
 
 const axiosInstance = axios.create({
