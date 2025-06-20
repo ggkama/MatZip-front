@@ -4,7 +4,7 @@ import logo from "../../../assets/img/logo.svg";
 const Header = () => {
   return (
     <header className="border-b border-gray-200 bg-white">
-      <div className="flex justify-between items-center px-6 py-2">
+      <div className="header-container flex justify-between items-center py-2 max-w-5xl">
         <div className="flex items-center gap-2">
           <img src={logo} alt="MatZip" className="w-20 h-20" />
         </div>
