@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Test from "./pages/Home/Test";
 import Header from "./components/Common/Header/Header";
 import Footer from "./components/Common/Footer/Footer";
+import Mypage from "./components/Mypage/Mypage";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <div className="container">
         <Routes>
           <Route path="/test" element={<Test />} />
+          <Route path="/my-page" element={<Mypage />} />
         </Routes>
       </div>
       <Footer />
