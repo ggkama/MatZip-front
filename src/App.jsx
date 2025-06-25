@@ -11,8 +11,15 @@ import MyReservaitonList from "./components/Mypage/Reservation/MyReservatonList"
 import AccountDelete from "./components/Mypage/MyInfo/AccountDelete";
 import MyReservationDetail from "./components/Mypage/Reservation/MyReservationDetail";
 import WriteReviewForm from "./components/Mypage/Review/WriteReviewForm";
-import MyReviews from "./components/Mypage/Review/MyReviews";
+import MyReviewsList from "./components/Mypage/Review/MyReviewsList";
 import MyReviewsDetail from "./components/Mypage/Review/MyReviewsDetail";
+import OwnerPage from "./components/Owner/OwnerPage";
+import RegisterStoreForm from "./components/Owner/RegisterStoreForm";
+import OwnerReservationList from "./components/Owner/OwnerReservationList";
+import OwnerReservationDetail from "./components/Owner/OwnerReservationDetail";
+import OwnerReviewList from "./components/Owner/OwnerReviewList";
+import OwnerReviewDetail from "./components/Owner/OwnerReviewDetail";
+import ReservationForm from "./components/Reservation/ReservationForm";
 
 function App() {
   return (
@@ -25,7 +32,7 @@ function App() {
           <Route path="/my-page" element={<Mypage />} />
           <Route path="/my-password" element={<PasswordInput />} />
           <Route path="/my-info" element={<MyInfoForm />} />
-          <Route path="/new-passwo rd" element={<ChangePassword />} />
+          <Route path="/new-password" element={<ChangePassword />} />
           <Route path="/my-reservation-list" element={<MyReservaitonList />} />
           <Route
             path="/my-reservation-detail"
@@ -37,8 +44,19 @@ function App() {
             element={<MyReservationDetail />}
           />
           <Route path="/review-form" element={<WriteReviewForm />} />
-          <Route path="/my-review-list" element={<MyReviews />} />
+          <Route path="/my-review-list" element={<MyReviewsList />} />
           <Route path="/my-review-detail" element={<MyReviewsDetail />} />
+          {/* 사장님 마이페이지 */}
+          <Route path="/owner-page" element={<OwnerPage />} />
+          <Route path="/register-store" element={<RegisterStoreForm />} />
+          <Route path="/store-reservation" element={<OwnerReservationList />} />
+          <Route
+            path="/store-reservation-detail"
+            element={<OwnerReservationDetail />}
+          />
+          <Route path="/store-review" element={<OwnerReviewList />} />
+          <Route path="/store-review-detail" element={<OwnerReviewDetail />} />
+          <Route path="/reservaion-form" element={<ReservationForm />} />
         </Routes>
       </div>
       <Footer />

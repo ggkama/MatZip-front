@@ -16,7 +16,7 @@ const MyPage = () => {
       <h2 className="text-3xl font-semibold mb-8">마이페이지</h2>
       {/* 유저 정보 */}
       <div className="flex flex-col items-center mb-8">
-        <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center text-3xl mb-4"></div>
+        <div className="w-30 h-30 bg-gray-200 rounded-full flex items-center justify-center text-3xl mb-4"></div>
         <p className="text-sm text-gray-500">user0101</p>
         <p className="text-lg font-bold">홍길동님 환영합니다.</p>
         <button className="mt-2 px-4 py-1 bg-black text-white text-sm rounded">
@@ -46,7 +46,11 @@ const MyPage = () => {
           label="내 예약 내역"
           onClick={() => navi("/my-reservation-list")}
         />
-        <MenuButton icon={<IoPencil size={30} />} label="내 리뷰 내역" />
+        <MenuButton
+          icon={<IoPencil size={30} />}
+          label="내 리뷰 내역"
+          onClick={() => navi("/my-review-list")}
+        />
         <MenuButton icon={<IoPeopleSharp size={30} />} label="사장님 신청" />
       </div>
     </div>

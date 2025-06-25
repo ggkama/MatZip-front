@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const reservations = [
   {
@@ -84,100 +83,83 @@ const reservations = [
   },
 ];
 
-const formatDateTime = (dateStr, timeStr) => {
-  return new Date(`${dateStr}T${timeStr}:00`);
-};
-
 const MyReservationList = () => {
-  const now = new Date();
-
   const navi = useNavigate();
+
+  const handleWriteReview = (res) => {
+    navi("/review-form", { state: { reservation: res } });
+  };
+
+  const handleViewReview = (res) => {
+    navi("/my-review-detail", { state: { reservation: res } });
+  };
 
   return (
     <div className="flex flex-col items-center pt-10 pb-20 px-4">
       <h2 className="text-3xl font-bold mb-5">내 예약 내역</h2>
-      <ul className="w-full max-w-4xl border-black border-t-2 border-b-2 mt-5">
-        <li className="grid grid-cols-6 text-sm font-semibold py-3 border-b border-gray-500 ">
-          <span className="text-center">날짜</span>
-          <span className="text-center">가게명</span>
-          <span className="text-center">시간</span>
-          <span className="text-center">인원수</span>
-          <span className="text-center">예약상태</span>
-          <span className="text-center">리뷰</span>
-        </li>
-        {reservations.map((res, idx) => {
-          const reservationDateTime = formatDateTime(
-            res.reservationDate,
-            res.reservationTime
-          );
-          const handleWriteReview = (res) => {
-            navi("/review-form", { state: { reservation: res } });
-          };
 
-          return (
-            <li
+      <table className="w-full max-w-4xl border-t-2 border-b-2 border-black text-sm table-fixed text-center">
+        <thead>
+          <tr className="border-b border-gray-500 font-semibold">
+            <th className="py-3">날짜</th>
+            <th className="py-3">가게명</th>
+            <th className="py-3">시간</th>
+            <th className="py-3">인원수</th>
+            <th className="py-3">예약상태</th>
+            <th className="py-3">리뷰</th>
+          </tr>
+        </thead>
+        <tbody>
+          {reservations.map((res, idx) => (
+            <tr
               key={idx}
-              className="grid grid-cols-6 items-center text-sm py-4 border-b border-gray-300 cursor-pointer  hover:bg-gray-200"
+              className="border-b border-gray-300 hover:bg-gray-100 cursor-pointer"
+              onClick={() => navi("/my-reservation-detail")}
             >
-              <span
-                onClick={() => navi("/my-reservation-detail")}
-                className="text-center"
-              >
-                {res.reservationDate}
-              </span>
-              <span
-                onClick={() => navi("/my-reservation-detail")}
-                className="pl-8 truncate overflow-hidden whitespace-nowrap w-40"
-              >
+              <td className="py-3">{res.reservationDate}</td>
+              <td className="truncate max-w-[160px] px-2" title={res.storeName}>
                 {res.storeName}
-              </span>
-              <span
-                onClick={() => navi("/my-reservation-detail")}
-                className="text-center"
-              >
-                {res.reservationTime}
-              </span>
-              <span
-                onClick={() => navi("/my-reservation-detail")}
-                className="text-center"
-              >
-                {res.personCount}
-              </span>
-              <span
-                onClick={() => navi("/my-reservation-detail")}
-                className={`text-center ${
+              </td>
+              <td>{res.reservationTime}</td>
+              <td>{res.personCount}</td>
+              <td
+                className={
                   res.reservationStatus === "예약취소"
                     ? "text-red-500"
                     : "text-gray-700"
-                }`}
+                }
               >
                 {res.reservationStatus}
-              </span>
-              <span className="text-center">
+              </td>
+              <td>
                 {res.reviewStatus === "작성자격없음" ? (
                   "-"
                 ) : res.reviewStatus === "작성하기" ? (
                   <button
-                    className="bg-orange-400 text-white text-xs px-3 py-1 rounded hover:bg-orange-500 cursor-pointer"
-                    onClick={() => handleWriteReview(res)}
+                    className="bg-orange-400 text-white text-xs px-3 py-1 rounded hover:bg-orange-500"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleWriteReview(res);
+                    }}
                   >
                     작성하기
                   </button>
-                ) : res.reviewStatus === "작성완료" ? (
+                ) : (
                   <button
-                    className="bg-orange-300 text-white text-xs px-3 py-1 rounded hover:bg-orange-400 cursor-pointer"
-                    onClick={() => handleViewReview(res)}
+                    className="bg-orange-300 text-white text-xs px-3 py-1 rounded hover:bg-orange-400"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleViewReview(res);
+                    }}
                   >
                     작성한 리뷰보기
                   </button>
-                ) : (
-                  "-"
                 )}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
