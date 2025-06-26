@@ -1,97 +1,33 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const reservations = [
-  {
-    reservationDate: "2025.06.20",
-    reservationTime: "10:00",
-    storeName: "88점 팀호완",
-    personCount: 4,
-    reservationStatus: "예약완료",
-    reviewStatus: "작성하기",
-  },
-  {
-    reservationDate: "2025.06.22",
-    reservationTime: "18:00",
-    storeName: "우래옥 본점",
-    personCount: 2,
-    reservationStatus: "예약완료",
-    reviewStatus: "작성하기",
-  },
-  {
-    reservationDate: "2025.06.23",
-    reservationTime: "15:00",
-    storeName: "오레노라멘",
-    personCount: 1,
-    reservationStatus: "예약완료",
-    reviewStatus: "작성완료",
-  },
-  {
-    reservationDate: "2025.06.24",
-    reservationTime: "22:00",
-    storeName: "라무진",
-    personCount: 2,
-    reservationStatus: "예약취소",
-    reviewStatus: "작성자격없음",
-  },
-  {
-    reservationDate: "2025.06.19",
-    reservationTime: "12:00",
-    storeName: "백암순대",
-    personCount: 3,
-    reservationStatus: "예약완료",
-    reviewStatus: "작성완료",
-  },
-  {
-    reservationDate: "2025.06.24",
-    reservationTime: "08:00",
-    storeName: "마라탕나라",
-    personCount: 2,
-    reservationStatus: "예약완료",
-    reviewStatus: "작성완료",
-  },
-  {
-    reservationDate: "2025.06.21",
-    reservationTime: "11:00",
-    storeName: "바른고기",
-    personCount: 2,
-    reservationStatus: "예약완료",
-    reviewStatus: "작성완료",
-  },
-  {
-    reservationDate: "2025.06.23",
-    reservationTime: "20:30",
-    storeName: "다이닝맛집",
-    personCount: 5,
-    reservationStatus: "예약완료",
-    reviewStatus: "작성하기",
-  },
-  {
-    reservationDate: "2025.06.24",
-    reservationTime: "23:59",
-    storeName: "샤브로이",
-    personCount: 2,
-    reservationStatus: "예약취소",
-    reviewStatus: "작성자격없음",
-  },
-  {
-    reservationDate: "2025.06.22",
-    reservationTime: "17:30",
-    storeName: "카츠시",
-    personCount: 3,
-    reservationStatus: "예약완료",
-    reviewStatus: "작성완료",
-  },
-];
+// import { apiService } from "../../api/apiService"; // 나중에 사용 예정
 
 const MyReservationList = () => {
-  const navi = useNavigate();
+  const navigate = useNavigate();
+  const [reservations, setReservations] = useState([]);
+
+  useEffect(() => {
+    // TODO: 백엔드 붙이면 여기서 API 호출
+    // const fetchData = async () => {
+    //   const res = await apiService.get("/api/mypage/reservations");
+    //   setReservations(res.data);
+    // };
+    // fetchData();
+
+    // 지금은 임시 mock 데이터
+    setReservations(mockReservations);
+  }, []);
 
   const handleWriteReview = (res) => {
-    navi("/review-form", { state: { reservation: res } });
+    navigate("/review-form", { state: { reservation: res } });
   };
 
   const handleViewReview = (res) => {
-    navi("/my-review-detail", { state: { reservation: res } });
+    navigate("/my-review-detail", { state: { reservation: res } });
+  };
+
+  const handleViewDetail = (res) => {
+    navigate("/my-reservation-detail", { state: { reservation: res } });
   };
 
   return (
@@ -114,7 +50,7 @@ const MyReservationList = () => {
             <tr
               key={idx}
               className="border-b border-gray-300 hover:bg-gray-100 cursor-pointer"
-              onClick={() => navi("/my-reservation-detail")}
+              onClick={() => handleViewDetail(res)}
             >
               <td className="py-3">{res.reservationDate}</td>
               <td className="truncate max-w-[160px] px-2" title={res.storeName}>
@@ -165,3 +101,39 @@ const MyReservationList = () => {
 };
 
 export default MyReservationList;
+
+// 백엔드 붙기 전 임시 mock 데이터
+const mockReservations = [
+  {
+    reservationDate: "2025.06.20",
+    reservationTime: "10:00",
+    storeName: "88점 팀호완",
+    personCount: 4,
+    reservationStatus: "예약완료",
+    reviewStatus: "작성하기",
+  },
+  {
+    reservationDate: "2025.06.22",
+    reservationTime: "18:00",
+    storeName: "우래옥 본점",
+    personCount: 2,
+    reservationStatus: "예약완료",
+    reviewStatus: "작성하기",
+  },
+  {
+    reservationDate: "2025.06.23",
+    reservationTime: "15:00",
+    storeName: "오레노라멘",
+    personCount: 1,
+    reservationStatus: "예약완료",
+    reviewStatus: "작성완료",
+  },
+  {
+    reservationDate: "2025.06.24",
+    reservationTime: "22:00",
+    storeName: "라무진",
+    personCount: 2,
+    reservationStatus: "예약취소",
+    reviewStatus: "작성자격없음",
+  },
+];

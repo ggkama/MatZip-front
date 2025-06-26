@@ -1,6 +1,5 @@
-// src/components/MyPage/AccountDelete.jsx
 import React, { useState } from "react";
-import axios from "axios";
+import { apiService } from "../../../api/apiService";
 
 const AccountDelete = () => {
   const [userPw, setUserPw] = useState("");
@@ -14,11 +13,7 @@ const AccountDelete = () => {
     }
 
     try {
-      const token = localStorage.getItem("accessToken");
-      const res = await axios.delete("/api/users", {
-        headers: { Authorization: `Bearer ${token}` },
-        data: { userPw }, // DELETE에도 data 가능
-      });
+      const res = await apiService.delete("/api/users", { userPw });
 
       if (res.data.code === "A200") {
         alert("회원탈퇴가 완료되었습니다.");
@@ -27,7 +22,7 @@ const AccountDelete = () => {
         alert(res.data.message || "회원탈퇴에 실패했습니다.");
       }
     } catch (err) {
-      alert("서버 요청 실패");
+      alert("요청 실패");
     }
   };
 

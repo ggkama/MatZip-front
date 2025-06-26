@@ -13,20 +13,16 @@ const OwnerReservationDetail = () => {
   };
 
   const [showCancelModal, setShowCancelModal] = useState(false);
-  const [cancelReason, setCancelReason] = useState("");
   const [customReason, setCustomReason] = useState("");
 
   const handleCancelConfirm = () => {
-    if (cancelReason === "기타" && !customReason.trim()) {
+    if (!customReason.trim()) {
       alert("취소 사유를 입력해주세요.");
       return;
     }
 
-    // TODO: API 호출로 취소 요청 보내기
-    console.log(
-      "취소 사유:",
-      cancelReason === "기타" ? customReason : cancelReason
-    );
+    // TODO: API 호출
+    console.log("취소 사유:", customReason);
     setShowCancelModal(false);
     alert("예약이 취소되었습니다.");
   };
@@ -35,7 +31,7 @@ const OwnerReservationDetail = () => {
     <div className="flex flex-col items-center pt-10 pb-20 px-4">
       <h2 className="text-3xl font-bold mb-10">내 가게 예약 내역</h2>
 
-      <div className="space-y-3 text-sm w-[300px]  mx-auto">
+      <div className="space-y-3 text-sm w-[300px] mx-auto">
         <InfoRow label="예약자명" value={reservation.userName} />
         <InfoRow label="핸드폰번호" value={reservation.userPhone} />
         <InfoRow label="예약 일시" value={reservation.reservationDate} />
@@ -44,7 +40,7 @@ const OwnerReservationDetail = () => {
 
         <button
           onClick={() => setShowCancelModal(true)}
-          className="mt-4 bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600 cursor-pointer"
+          className="mt-4 bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600"
         >
           예약취소
         </button>
@@ -52,32 +48,23 @@ const OwnerReservationDetail = () => {
 
       <button
         onClick={() => navi("/store-reservation")}
-        className="mt-12 bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 cursor-pointer"
+        className="mt-12 bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600"
       >
         목록
       </button>
 
-      {/* 모달 */}
       {showCancelModal && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
-        >
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded shadow-md w-[90%] max-w-md">
             <h3 className="text-lg font-bold mb-4">예약을 취소하시겠습니까?</h3>
 
-            <div className="space-y-3 mb-4">
-              <div>
-                <input
-                  type="text"
-                  placeholder="사유 입력"
-                  className="mt-2 w-full border px-2 py-1 rounded"
-                  ㅎ
-                  value={customReason}
-                  onChange={(e) => setCustomReason(e.target.value)}
-                />
-              </div>
-            </div>
+            <input
+              type="text"
+              placeholder="사유 입력"
+              className="w-full border px-2 py-1 rounded mb-4"
+              value={customReason}
+              onChange={(e) => setCustomReason(e.target.value)}
+            />
 
             <div className="flex justify-end gap-2">
               <button

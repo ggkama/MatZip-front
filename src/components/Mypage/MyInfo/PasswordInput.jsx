@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-const userPwInput = () => {
-  const [userPw, setuserPw] = useState("");
+const PasswordInput = () => {
+  const [userPw, setUserPw] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,11 +18,11 @@ const userPwInput = () => {
             비밀번호
           </label>
           <input
-            type="userPw"
+            type="password"
             id="userPw"
             className="border border-orange-400 rounded px-3 py-2 w-full focus:outline-none"
             value={userPw}
-            onChange={(e) => setuserPw(e.target.value)}
+            onChange={(e) => setUserPw(e.target.value)}
           />
         </div>
 
@@ -37,4 +37,4 @@ const userPwInput = () => {
   );
 };
 
-export default userPwInput;
+export default PasswordInput;

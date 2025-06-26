@@ -1,29 +1,38 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { apiService } from "../../../api/apiService";
+
 const WriteReviewForm = () => {
   const [grade, setGrade] = useState(5);
   const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
 
+  const { state } = useLocation();
+  const { storeId, storeName, reviewDate } = state || {
+    storeId: null,
+    storeName: "매장명",
+    reviewDate: "YYYY-MM-DD",
+  };
+
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-
     if (images.length + files.length > 5) {
       alert("이미지는 최대 5장까지 업로드할 수 있습니다.");
       return;
     }
 
-    const newImagePreviews = files.map((file) => URL.createObjectURL(file));
+    const previews = files.map((file) => URL.createObjectURL(file));
     setImages((prev) => [...prev, ...files]);
-    setPreviewUrls((prev) => [...prev, ...newImagePreviews]);
+    setPreviewUrls((prev) => [...prev, ...previews]);
   };
 
-  const handleRemoveImage = (indexToRemove) => {
-    setPreviewUrls((prev) => prev.filter((_, idx) => idx !== indexToRemove));
-    setImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  const handleRemoveImage = (idx) => {
+    setImages((prev) => prev.filter((_, i) => i !== idx));
+    setPreviewUrls((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!content.trim()) {
@@ -34,27 +43,20 @@ const WriteReviewForm = () => {
     const formData = new FormData();
     formData.append("grade", grade);
     formData.append("content", content);
-    formData.append("reviewDate", "2025-06-25"); // 예시값
-    formData.append("storeId", 123); // 실제 storeId 대입 필요
+    formData.append("reviewDate", reviewDate);
+    formData.append("storeId", storeId);
     images.forEach((img) => formData.append("reviewImages", img));
 
-    fetch("/api/mypage/myReviews/write", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.code === "200") {
-          alert("리뷰 작성 완료");
-          // 이동 로직 필요 시 추가
-        } else {
-          alert(data.message || "리뷰 작성 실패");
-        }
-      })
-      .catch((err) => alert("요청 실패: " + err));
+    try {
+      await apiService.post("/mypage/myReviews/write", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert("리뷰 작성 완료");
+    } catch (err) {
+      alert("리뷰 작성 실패");
+    }
   };
 
   return (
@@ -65,11 +67,9 @@ const WriteReviewForm = () => {
       <h2 className="text-2xl font-bold text-center">리뷰 작성하기</h2>
 
       <p className="text-xl text-center">
-        <strong className="text-orange-600 font-extrabold">
-          2025년 6월 25일
-        </strong>
+        <strong className="text-orange-600 font-extrabold">{reviewDate}</strong>
         에 방문하셨던 <br />
-        <strong className="text-orange-600  font-extrabold">비스트로트</strong>
+        <strong className="text-orange-600 font-extrabold">{storeName}</strong>
         에 대해 평가를 남겨주세요.
       </p>
 
@@ -106,7 +106,6 @@ const WriteReviewForm = () => {
       <div className="space-y-2">
         <label className="font-medium block">매장 이미지 *</label>
 
-        {/* 업로드 버튼 */}
         <label className="inline-block px-4 py-2 bg-orange-600 text-white text-sm rounded cursor-pointer hover:bg-orange-700">
           이미지 업로드
           <input
@@ -118,7 +117,6 @@ const WriteReviewForm = () => {
           />
         </label>
 
-        {/* 썸네일 + 삭제버튼 */}
         <div className="grid grid-cols-5 gap-2 mt-2">
           {previewUrls.map((url, idx) => (
             <div key={idx} className="relative w-24 h-24">

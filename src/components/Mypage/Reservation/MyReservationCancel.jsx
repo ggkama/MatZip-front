@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { apiService } from "../../api/apiService";
 import { useNavigate } from "react-router-dom";
 
 const MyReservationCancel = () => {
@@ -7,29 +7,23 @@ const MyReservationCancel = () => {
   const [selectedReservationId, setSelectedReservationId] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
   const [customReason, setCustomReason] = useState("");
-  const [cancelSuccess, setCancelSuccess] = useState(false);
   const [error, setError] = useState("");
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // 예약 리스트 불러오기
-    const fetchReservations = async () => {
-      try {
-        const res = await axios.get("/api/mypage/reservations", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        setReservations(res.data);
-      } catch (err) {
-        setError("예약 목록을 불러오지 못했습니다.");
-      }
-    };
+  const fetchReservations = async () => {
+    try {
+      const res = await apiService.get("/api/mypage/reservations");
+      setReservations(res.data);
+    } catch {
+      setError("예약 목록을 불러오지 못했습니다.");
+    }
+  };
 
+  useEffect(() => {
     fetchReservations();
-  }, [cancelSuccess]);
+  }, []);
 
   const handleCancelClick = (reservationId, reservationDate) => {
     const today = new Date();
@@ -42,6 +36,9 @@ const MyReservationCancel = () => {
     }
 
     setSelectedReservationId(reservationId);
+    setCancelReason("");
+    setCustomReason("");
+    setError("");
     setShowCancelModal(true);
   };
 
@@ -59,27 +56,19 @@ const MyReservationCancel = () => {
     }
 
     try {
-      const res = await axios.patch(
-        "/api/mypage/reservations/cancel",
-        {
-          reservationId: selectedReservationId,
-          reason,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await apiService.patch("/api/mypage/reservations/cancel", {
+        reservationId: selectedReservationId,
+        reason,
+      });
 
       if (res.data.code === "200") {
-        setCancelSuccess(true);
-        setShowCancelModal(false);
         alert("예약이 성공적으로 취소되었습니다.");
+        setShowCancelModal(false);
+        fetchReservations(); // 취소 후 새로고침
       } else {
         setError(res.data.message || "예약 취소 실패");
       }
-    } catch (err) {
+    } catch {
       setError("서버 요청 중 오류가 발생했습니다.");
     }
   };
@@ -105,7 +94,6 @@ const MyReservationCancel = () => {
         </div>
       ))}
 
-      {/* 취소 모달 */}
       {showCancelModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded w-[90%] max-w-md">
