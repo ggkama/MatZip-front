@@ -14,7 +14,7 @@ import WriteReviewForm from "./components/Mypage/Review/WriteReviewForm";
 import MyReviewsList from "./components/Mypage/Review/MyReviewsList";
 import MyReviewsDetail from "./components/Mypage/Review/MyReviewsDetail";
 import OwnerPage from "./components/Owner/OwnerPage";
-import RegisterStoreForm from "./components/Owner/RegisterStoreForm";
+import RegisterStoreForm from "./components/Owner/RegiseterStoreForm/RegisterStoreForm";
 import OwnerReservationList from "./components/Owner/OwnerReservationList";
 import OwnerReservationDetail from "./components/Owner/OwnerReservationDetail";
 import OwnerReviewList from "./components/Owner/OwnerReviewList";

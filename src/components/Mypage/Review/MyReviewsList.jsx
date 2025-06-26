@@ -1,22 +1,54 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiService } from "../../../api/apiService";
+// import { apiService } from "../../../api/apiService"; // 실제 API 사용 시 주석 해제
 
 const MyReviewsList = () => {
   const navi = useNavigate();
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const res = await apiService.get("/mypage/reviews");
-        setReviews(res.data); // 배열 형태로 온다고 가정
-      } catch (err) {
-        console.error("리뷰 목록을 불러오는 데 실패했습니다.");
-      }
-    };
+    // 테스트용 데이터 삽입
+    const mockData = [
+      {
+        createdDate: "2025-06-25",
+        content: "음식이 정말 맛있었고, 서비스도 친절했어요!",
+        storeName: "맛있는 고깃집",
+        storeGrade: 5,
+      },
+      {
+        createdDate: "2025-06-20",
+        content: "대기 시간이 길었지만 음식은 괜찮았어요.",
+        storeName: "분식천국",
+        storeGrade: 4,
+      },
+      {
+        createdDate: "2025-06-15",
+        content: "기대 이하였습니다. 재방문은 안 할 것 같아요.",
+        storeName: "해물파전집",
+        storeGrade: 2,
+      },
+    ];
+    setReviews(mockData);
 
-    fetchReviews();
+    // 실제 API 연동 시 사용
+    // const fetchReviews = async () => {
+    //   try {
+    //     const res = await apiService.get("/mypage/reviews");
+    //     const data = res.data;
+    //     if (Array.isArray(data)) {
+    //       setReviews(data);
+    //     } else if (Array.isArray(data.reviews)) {
+    //       setReviews(data.reviews);
+    //     } else {
+    //       setReviews([]);
+    //       console.warn("리뷰 데이터 형식이 배열이 아닙니다.", data);
+    //     }
+    //   } catch (err) {
+    //     console.error("리뷰 목록을 불러오는 데 실패했습니다.", err);
+    //     setReviews([]);
+    //   }
+    // };
+    // fetchReviews();
   }, []);
 
   return (
@@ -35,23 +67,31 @@ const MyReviewsList = () => {
           </tr>
         </thead>
         <tbody>
-          {reviews.map((review, idx) => (
-            <tr
-              key={idx}
-              className="border-b border-gray-300 hover:bg-gray-100 cursor-pointer"
-              onClick={() => navi("/my-review-detail", { state: { review } })}
-            >
-              <td className="py-3">{formatDate(review.createdDate)}</td>
-              <td
-                className="px-2 max-w-[300px] truncate"
-                title={review.content}
+          {reviews.length > 0 ? (
+            reviews.map((review, idx) => (
+              <tr
+                key={idx}
+                className="border-b border-gray-300 hover:bg-gray-100 cursor-pointer"
+                onClick={() => navi("/my-review-detail", { state: { review } })}
               >
-                {review.content}
+                <td className="py-3">{formatDate(review.createdDate)}</td>
+                <td
+                  className="px-2 max-w-[300px] truncate"
+                  title={review.content}
+                >
+                  {review.content}
+                </td>
+                <td>{review.storeName}</td>
+                <td>{review.storeGrade}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4" className="py-6 text-gray-500">
+                리뷰가 없습니다.
               </td>
-              <td>{review.storeName}</td>
-              <td>{review.storeGrade}</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

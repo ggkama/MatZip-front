@@ -31,9 +31,7 @@ const MyReviewsDetail = () => {
             {review.storeGrade}점
           </div>
 
-          <p className="whitespace-pre-line text-sm text-gray-800 mb-4">
-            {review.content}
-          </p>
+          <p className="text-sm text-gray-800 mb-4">{review.content}</p>
 
           {review.imgUrls?.length > 0 && (
             <div className="flex gap-4">
