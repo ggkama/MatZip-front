@@ -1,22 +1,28 @@
 const ConvenienceSelector = ({ options, selected, toggle }) => (
   <div className="space-y-1">
-    <label>편의시설 *</label>
+    <label className="block font-medium">편의시설 *</label>
     <div className="flex gap-2 flex-wrap">
-      {options.map((item) => (
-        <button
-          type="button"
-          key={item}
-          onClick={() => toggle(item)}
-          className={`px-4 py-2 rounded-full border ${
-            selected.includes(item)
-              ? "bg-orange-400 text-white border-orange-400"
-              : "bg-white text-gray-800 border-gray-300"
-          }`}
-        >
-          {item}
-        </button>
-      ))}
+      {options.map((opt) => {
+        const isSelected = selected.includes(opt.key);
+        return (
+          <button
+            key={opt.key}
+            type="button"
+            onClick={() => toggle(opt.key)}
+            className={`px-4 py-2 rounded-md border 
+              ${
+                isSelected
+                  ? "bg-orange-500 text-white border-orange-500"
+                  : "bg-white text-gray-700 border-gray-300"
+              }
+              hover:shadow-md transition`}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
     </div>
   </div>
 );
+
 export default ConvenienceSelector;
