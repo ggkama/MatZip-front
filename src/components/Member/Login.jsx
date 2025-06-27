@@ -17,8 +17,28 @@ const Login = () => {
     axiosInstance
       .post("/api/auth/login", data, { auth: false })
       .then((response) => {
-        if (response.data.code == "S203") {
-          console.log(response);
+        if (response.data.code === "S203") {
+          const {
+            accessToken,
+            refreshToken,
+            userNo,
+            userId,
+            userName,
+            userNickName,
+            userRole,
+          } = response.data.data;
+
+          // ✅ 세션에 저장
+          const tokens = {
+            accessToken,
+            refreshToken,
+            userNo,
+            userId,
+            userName,
+            userNickName,
+            userRole,
+          };
+          sessionStorage.setItem("tokens", JSON.stringify(tokens));
           alert(response.data.message);
           navi("/");
         }
