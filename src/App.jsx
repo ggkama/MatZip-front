@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import Test from "./pages/Home/Test";
 import Header from "./components/Common/Header/Header";
 import Footer from "./components/Common/Footer/Footer";
+import SignUp from "./components/Member/SignUp";
+import Login from "./components/Member/Login";
 import Mypage from "./components/Mypage/MyInfo/Mypage";
 import PasswordInput from "./components/Mypage/MyInfo/PasswordInput";
 import MyInfoForm from "./components/Mypage/MyInfo/MyInfoForm";
@@ -20,6 +22,9 @@ import OwnerReservationDetail from "./components/Owner/OwnerReservationDetail";
 import OwnerReviewList from "./components/Owner/OwnerReviewList";
 import OwnerReviewDetail from "./components/Owner/OwnerReviewDetail";
 import ReservationForm from "./components/Reservation/ReservationForm";
+import NoticeList from "./components/Notice/NoticeList";
+import NoticeDetail from "./components/Notice/NoticeDetail";
+import NoticeWriteForm from "./components/Notice/NoticeWriteForm";
 
 function App() {
   return (
@@ -28,6 +33,8 @@ function App() {
       <div className="container">
         <Routes>
           <Route path="/test" element={<Test />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
           {/* 마이페이지 */}
           <Route path="/my-page" element={<Mypage />} />
           <Route path="/my-password" element={<PasswordInput />} />
@@ -46,6 +53,10 @@ function App() {
           <Route path="/review-form" element={<WriteReviewForm />} />
           <Route path="/my-review-list" element={<MyReviewsList />} />
           <Route path="/my-review-detail" element={<MyReviewsDetail />} />
+          {/* 공지사항 */}
+          <Route path="/notice" element={<NoticeList/>} />
+          <Route path="/notice-detail" element={<NoticeDetail/>} />
+          <Route path="/notice-write" element={<NoticeWriteForm/>} />
           {/* 사장님 마이페이지 */}
           <Route path="/owner-page" element={<OwnerPage />} />
           <Route path="/register-store" element={<RegisterStoreForm />} />
