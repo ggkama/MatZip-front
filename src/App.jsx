@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import Test from "./pages/Home/Test";
 import Header from "./components/Common/Header/Header";
 import Footer from "./components/Common/Footer/Footer";
+import SignUp from "./components/Member/SignUp";
+import Login from "./components/Member/Login";
 import Mypage from "./components/Mypage/MyInfo/Mypage";
 import PasswordInput from "./components/Mypage/MyInfo/PasswordInput";
 import MyInfoForm from "./components/Mypage/MyInfo/MyInfoForm";
@@ -28,6 +30,8 @@ function App() {
       <div className="container">
         <Routes>
           <Route path="/test" element={<Test />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
           {/* 마이페이지 */}
           <Route path="/my-page" element={<Mypage />} />
           <Route path="/my-password" element={<PasswordInput />} />
