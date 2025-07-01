@@ -13,6 +13,7 @@ import {
   isValidPhoneNumber,
 } from "./styledComponents/js/phone";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 
 const RegisterStoreForm = () => {
   const navigate = useNavigate();
