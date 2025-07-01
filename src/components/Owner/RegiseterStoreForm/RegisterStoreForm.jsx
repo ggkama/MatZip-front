@@ -8,9 +8,11 @@ import HolidayPicker from "./styledComponents/HolidayPicker";
 import ImageUploader from "./styledComponents/ImageUploader";
 import SubmitButton from "./styledComponents/SubmitButton";
 import convenienceOptions from "./styledComponents/js/convenienceOptions";
-import apiService from "../../../api/axiosInstance";
+import {
+  formatPhoneNumber,
+  isValidPhoneNumber,
+} from "./styledComponents/js/phone";
 import axios from "axios";
-import axiosInstance from "../../../api/axiosInstance";
 
 const RegisterStoreForm = () => {
   const navigate = useNavigate();
@@ -20,10 +22,9 @@ const RegisterStoreForm = () => {
       "tokens",
       JSON.stringify({
         accessToken:
-          "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI4IiwidXNlcklkIjoic29samlucGFyazEyMjNAZ21haWwuY29tIiwidXNlclJvbGUiOiJST0xFX09XTkVSIiwiaWF0IjoxNzUxMDEwMjI0LCJleHAiOjE3NTEwMTc0MjR9.EUMvGhG47Hvmp1aoFF1-YscnaWH2A9mtF1JyF4ID2XUZRfnT3rmoTfhp5pqOITu70hazVsEeij5LDOEx1gz3EA",
+          "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMiIsInVzZXJJZCI6InNvbGppbnBhcmsxMjIzQGdtYWlsLmNvbSIsInVzZXJSb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzUxMzM3MzA4LCJleHAiOjE3NTEzNDQ1MDh9.Svq0gmDFW9hzD_uHwfpW5fKUhHYO4FnjsUfhulPkiE3g0zSm0OpxFrnEXex1HeK98lMC0laGxpN4vROexzcJ-Q",
       })
     );
-    axiosInstance.get("/api/owner/stores").catch((err) => {});
   }, []);
 
   const [storeName, setStoreName] = useState("");
@@ -39,11 +40,24 @@ const RegisterStoreForm = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [images, setImages] = useState([]);
-  const [menu, setMenu] = useState("");
+  const [menuName, setMenuName] = useState("");
+  const [menuList, setMenuList] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [count, setCount] = useState("");
 
   const dayOptions = ["월", "화", "수", "목", "금", "토", "일"];
+
+  useEffect(() => {
+    const items =
+      typeof menuName === "string"
+        ? menuName
+            .split(",")
+            .map((item) => item.trim())
+            .filter((item) => item !== "")
+        : [];
+    setMenuList(items);
+  }, [menuName]);
 
   const handleConvenienceToggle = (value) => {
     setCategoryConvenience((prev) =>
@@ -72,53 +86,52 @@ const RegisterStoreForm = () => {
       setError("모든 필수 항목을 입력해주세요.");
       return false;
     }
-
-    const phoneRegex = /^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}$/;
-    const timeRegex = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
-
-    if (!phoneRegex.test(storePhone)) {
+    if (!isValidPhoneNumber(storePhone)) {
       setError("전화번호 형식을 확인해주세요. 예: 02-1234-5678");
       return false;
     }
-
+    const timeRegex = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
     if (!timeRegex.test(openTime) || !timeRegex.test(closeTime)) {
       setError("영업시간은 HH:mm 형식으로 입력해주세요.");
       return false;
     }
-
+    if (!count || count <= 0) {
+      setError("시간당 수용 인원을 입력해주세요.");
+      return false;
+    }
     if (images.length < 1 || images.length > 5) {
       setError("이미지는 최소 1장 이상, 최대 5장까지 등록 가능합니다.");
       return false;
     }
-
     return true;
   };
 
   const handleSubmit = async () => {
     if (!validate()) return;
 
+    const storeDto = {
+      storeName,
+      categoryAddress,
+      categoryFoodtype,
+      storePhone,
+      storeAddress1,
+      storeAddress2,
+      openTime,
+      closeTime,
+      menuList,
+      categoryConvenience,
+      dayOff,
+      startDate,
+      endDate,
+      count,
+    };
+
     const formData = new FormData();
-    formData.append("storeName", storeName);
-    formData.append("categoryAddress", categoryAddress);
-    formData.append("categoryFoodtype", categoryFoodtype);
-    formData.append("storePhone", storePhone);
-    formData.append("storeAddress1", storeAddress1);
-    formData.append("storeAddress2", storeAddress2);
-    formData.append("openTime", openTime);
-    formData.append("closeTime", closeTime);
-    formData.append("menu", menu);
-
-    categoryConvenience.forEach((c) =>
-      formData.append("categoryConvenience", c)
+    formData.append(
+      "storeDto",
+      new Blob([JSON.stringify(storeDto)], { type: "application/json" })
     );
-    dayOff.forEach((d) => formData.append("dayOff", d));
-
-    if (startDate) formData.append("startDate", startDate);
-    if (endDate) formData.append("endDate", endDate);
-
-    Array.from(images).forEach((img) => {
-      formData.append("images", img);
-    });
+    images.forEach((img) => formData.append("images", img));
 
     const rawTokens = sessionStorage.getItem("tokens");
     const accessToken = rawTokens ? JSON.parse(rawTokens).accessToken : null;
@@ -130,9 +143,10 @@ const RegisterStoreForm = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+
       setSuccess(true);
       setError(null);
-      navigate("/my-store");
+      alert("등록이 완료되었습니다.");
     } catch (err) {
       setError("등록에 실패했습니다. 다시 시도해주세요.");
     }
@@ -144,21 +158,17 @@ const RegisterStoreForm = () => {
       <div className="space-y-4 flex flex-col w-[500px] mx-auto">
         <span className="text-sm text-gray-500">* 표시는 필수입니다.</span>
 
-        <FormInput
-          label="매장명 *"
-          value={storeName}
-          onChange={(e) => setStoreName(e)}
-        />
+        <FormInput label="매장명" value={storeName} onChange={setStoreName} />
         <FormSelect
-          label="지역 *"
+          label="지역"
           value={categoryAddress}
-          onChange={(e) => setCategoryAddress(e)}
+          onChange={setCategoryAddress}
           options={["서울특별시 강남구", "서울특별시 중구"]}
         />
         <FormSelect
-          label="음식 종류 *"
+          label="음식 종류"
           value={categoryFoodtype}
-          onChange={(e) => setCategoryFoodtype(e)}
+          onChange={setCategoryFoodtype}
           options={["한식", "양식", "중식", "일식"]}
         />
 
@@ -169,34 +179,34 @@ const RegisterStoreForm = () => {
         />
 
         <FormInput
-          label="전화번호 *"
+          label="전화번호"
           value={storePhone}
-          onChange={(e) => setStorePhone(e)}
-          placeholder="예: 02-1234-5678"
+          onChange={(e) => setStorePhone(formatPhoneNumber(e))}
+          placeholder="예: 010-1234-5678"
         />
 
         <FormInput
-          label="주소 *"
+          label="주소"
           value={storeAddress1}
-          onChange={(e) => setStoreAddress1(e)}
+          onChange={setStoreAddress1}
         />
         <FormInput
-          label="상세 주소 *"
+          label="상세 주소"
           value={storeAddress2}
-          onChange={(e) => setStoreAddress2(e)}
+          onChange={setStoreAddress2}
         />
 
         <FormInput
-          label="영업 시작 시간 *"
+          label="영업 시작 시간"
           type="time"
           value={openTime}
-          onChange={(e) => setOpenTime(e)}
+          onChange={setOpenTime}
         />
         <FormInput
-          label="영업 종료 시간 *"
+          label="영업 종료 시간"
           type="time"
           value={closeTime}
-          onChange={(e) => setCloseTime(e)}
+          onChange={setCloseTime}
         />
 
         <DayCheckboxGroup
@@ -205,24 +215,35 @@ const RegisterStoreForm = () => {
           toggle={handleDayToggle}
         />
 
-        <label className="font-medium">임시휴무일 *</label>
-        <HolidayPicker
-          startDate={startDate}
-          setStartDate={(e) => setStartDate(e)}
-          endDate={endDate}
-          setEndDate={(e) => setEndDate(e)}
-        />
+        <div className="flex flex-col">
+          <label className="font-bold mb-2">임시휴무일 (선택)</label>
+          <HolidayPicker
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+          />
+        </div>
 
         <FormInput
           label="대표 메뉴"
-          value={menu}
-          onChange={(e) => setMenu(e)}
+          value={menuName}
+          onChange={setMenuName}
+          placeholder="예: 김치찌개, 제육볶음, 된장찌개"
+        />
+
+        <FormInput
+          label="시간당 수용 인원 (명)"
+          type="number"
+          value={count}
+          onChange={(e) => setCount(Number(e))}
+          placeholder="예: 100"
         />
 
         <ImageUploader
           images={images}
-          setImages={(files) => setImages(files)}
-          setError={(msg) => setError(msg)}
+          setImages={setImages}
+          setError={setError}
         />
 
         {error && <p className="text-red-500 text-sm">{error}</p>}

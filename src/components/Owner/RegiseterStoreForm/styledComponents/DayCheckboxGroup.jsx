@@ -1,7 +1,7 @@
 const DayCheckboxGroup = ({ options, selected, toggle }) => (
   <div className="space-y-1">
-    <label>휴무일 (중복 선택 가능)</label>
-    <div className="flex gap-2 flex-wrap">
+    <label className="mb-2 font-bold">휴무일 (중복 선택 가능)</label>
+    <div className="flex gap-2 flex-wrap mt-2">
       {options.map((day) => {
         const isSelected = selected.includes(day);
         return (

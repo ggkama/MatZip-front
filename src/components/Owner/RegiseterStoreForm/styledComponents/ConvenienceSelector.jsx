@@ -1,6 +1,8 @@
 const ConvenienceSelector = ({ options, selected, toggle }) => (
   <div className="space-y-1">
-    <label className="block font-medium">편의시설 *</label>
+    <label className="block font-bold mb-2">
+      편의시설 <em className="text-red-500">*</em>
+    </label>
     <div className="flex gap-2 flex-wrap">
       {options.map((opt) => {
         const isSelected = selected.includes(opt.key);

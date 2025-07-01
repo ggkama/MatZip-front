@@ -18,10 +18,12 @@ const ImageUploader = ({ images, setImages, setError }) => {
 
   return (
     <div className="space-y-2">
-      <span>매장 이미지</span>
+      <span className="font-bold">
+        매장 이미지 <em className="text-red-500">*</em>
+      </span>
       <label
         htmlFor="images"
-        className="block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md cursor-pointer w-fit"
+        className="block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md cursor-pointer w-fit mt-3"
       >
         업로드
       </label>
