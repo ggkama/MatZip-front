@@ -13,20 +13,9 @@ import {
   isValidPhoneNumber,
 } from "./styledComponents/js/phone";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 
 const RegisterStoreForm = () => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    sessionStorage.setItem(
-      "tokens",
-      JSON.stringify({
-        accessToken:
-          "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyMiIsInVzZXJJZCI6InNvbGppbnBhcmsxMjIzQGdtYWlsLmNvbSIsInVzZXJSb2xlIjoiUk9MRV9VU0VSIiwiaWF0IjoxNzUxMzM3MzA4LCJleHAiOjE3NTEzNDQ1MDh9.Svq0gmDFW9hzD_uHwfpW5fKUhHYO4FnjsUfhulPkiE3g0zSm0OpxFrnEXex1HeK98lMC0laGxpN4vROexzcJ-Q",
-      })
-    );
-  }, []);
 
   const [storeName, setStoreName] = useState("");
   const [categoryAddress, setCategoryAddress] = useState("");
@@ -55,7 +44,7 @@ const RegisterStoreForm = () => {
         ? menuName
             .split(",")
             .map((item) => item.trim())
-            .filter((item) => item !== "")
+            .filter(Boolean)
         : [];
     setMenuList(items);
   }, [menuName]);
@@ -148,6 +137,7 @@ const RegisterStoreForm = () => {
       setSuccess(true);
       setError(null);
       alert("등록이 완료되었습니다.");
+      navigate("/owner-page");
     } catch (err) {
       setError("등록에 실패했습니다. 다시 시도해주세요.");
     }
@@ -172,20 +162,17 @@ const RegisterStoreForm = () => {
           onChange={setCategoryFoodtype}
           options={["한식", "양식", "중식", "일식"]}
         />
-
         <ConvenienceSelector
           options={convenienceOptions}
           selected={categoryConvenience}
           toggle={handleConvenienceToggle}
         />
-
         <FormInput
           label="전화번호"
           value={storePhone}
           onChange={(e) => setStorePhone(formatPhoneNumber(e))}
           placeholder="예: 010-1234-5678"
         />
-
         <FormInput
           label="주소"
           value={storeAddress1}
@@ -196,7 +183,6 @@ const RegisterStoreForm = () => {
           value={storeAddress2}
           onChange={setStoreAddress2}
         />
-
         <FormInput
           label="영업 시작 시간"
           type="time"
@@ -209,13 +195,11 @@ const RegisterStoreForm = () => {
           value={closeTime}
           onChange={setCloseTime}
         />
-
         <DayCheckboxGroup
           options={dayOptions}
           selected={dayOff}
           toggle={handleDayToggle}
         />
-
         <div className="flex flex-col">
           <label className="font-bold mb-2">임시휴무일 (선택)</label>
           <HolidayPicker
@@ -225,14 +209,12 @@ const RegisterStoreForm = () => {
             setEndDate={setEndDate}
           />
         </div>
-
         <FormInput
           label="대표 메뉴"
           value={menuName}
           onChange={setMenuName}
           placeholder="예: 김치찌개, 제육볶음, 된장찌개"
         />
-
         <FormInput
           label="시간당 수용 인원 (명)"
           type="number"
@@ -240,7 +222,6 @@ const RegisterStoreForm = () => {
           onChange={(e) => setCount(Number(e))}
           placeholder="예: 100"
         />
-
         <ImageUploader
           images={images}
           setImages={setImages}
