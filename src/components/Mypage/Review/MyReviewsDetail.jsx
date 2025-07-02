@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiService } from "../../../api/apiService";
 
 const MyReviewsDetail = () => {
   const [reviews, setReviews] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO: API 연동 시 아래 라인 교체
-    setReviews(mockReviews);
+    apiService
+    .get(`/api/review/myreview/detail/${reviewNo}`)
+      .then((res) => {
+        if (res.data.success) {
+          setReviews(res.data.data); 
+        }
+      })
+      .catch((err) => {
+        console.error("내 리뷰 불러오기 실패", err);
+      });
   }, []);
 
   if (!reviews.length) {
@@ -23,22 +32,22 @@ const MyReviewsDetail = () => {
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-bold">{review.storeName}</h3>
             <span className="text-sm text-gray-500">
-              {formatDate(review.createdDate)}
+              {formatDate(review.createDate)}
             </span>
           </div>
 
           <div className="text-sm text-gray-700 font-semibold mb-4">
-            {review.storeGrade}점
+            {review.grade}점
           </div>
 
           <p className="text-sm text-gray-800 mb-4">{review.content}</p>
 
-          {review.imgUrls?.length > 0 && (
+          {review.reviewImageList?.length > 0 && (
             <div className="flex gap-4">
-              {review.imgUrls.slice(0, 3).map((url, i) => (
+              {review.reviewImageList.slice(0, 3).map((img, i) => (
                 <img
                   key={i}
-                  src={url}
+                  src={img.reviewImageUrl}
                   alt={`리뷰 이미지 ${i + 1}`}
                   className="w-[100px] h-[100px] object-cover rounded bg-gray-200"
                 />
@@ -69,19 +78,3 @@ const formatDate = (dateStr) => {
 };
 
 export default MyReviewsDetail;
-
-// 더미 데이터
-const mockReviews = [
-  {
-    storeName: "우래옥 본점",
-    createdDate: "2025-06-18",
-    content:
-      "기다림의 인내심이 왠만큼 강하지 않으면 먹어 볼 수 없는 집...\n평양냉면의 육수는 첫 술에도 육향이 진동하고...",
-    imgUrls: [
-      "https://via.placeholder.com/100",
-      "https://via.placeholder.com/100",
-      "https://via.placeholder.com/100",
-    ],
-    storeGrade: 5,
-  },
-];

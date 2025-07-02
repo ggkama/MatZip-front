@@ -69,7 +69,7 @@ const Header = () => {
         <ul className="flex justify-center gap-15 text-white font-semibold text-xl py-4">
           <li className="hover:underline cursor-pointer">HOME</li>
           <li className="hover:underline cursor-pointer">맛집</li>
-          <li className="hover:underline cursor-pointer">공지사항</li>
+          <li className="hover:underline cursor-pointer" onClick={() => navi("/notice")}>공지사항</li>
         </ul>
       </nav>
     </header>
