@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { apiService } from "../../../api/apiService";
 
 const MyReviewsDetail = () => {
   const [reviews, setReviews] = useState([]);
-  const navigate = useNavigate();
+  const navi= useNavigate();
+  const location = useLocation();
+
+  const reviewNo = location.state?.review?.reviewNo;
 
   useEffect(() => {
+    if (!reviewNo) {
+      console.warn("리뷰 번호가 없습니다.");
+      return;
+    }
+
     apiService
-    .get(`/api/review/myreview/detail/${reviewNo}`)
+      .get(`/api/review/myreview/detail/${reviewNo}`)
       .then((res) => {
-        if (res.data.success) {
-          setReviews(res.data.data); 
-        }
+        console.log("리뷰 상세 응답:", res.data);
+        setReviews(res.data);
       })
       .catch((err) => {
         console.error("내 리뷰 불러오기 실패", err);
       });
-  }, []);
+  }, [reviewNo]);
 
   if (!reviews.length) {
     return <div className="text-center mt-10">작성한 리뷰가 없습니다.</div>;
@@ -37,29 +44,28 @@ const MyReviewsDetail = () => {
           </div>
 
           <div className="text-sm text-gray-700 font-semibold mb-4">
-            {review.grade}점
+            {review.storeGrade}점
           </div>
 
-          <p className="text-sm text-gray-800 mb-4">{review.content}</p>
+          <p className="text-sm text-gray-800 mb-4">{review.reviewContent}</p>
 
-          {review.reviewImageList?.length > 0 && (
+          
             <div className="flex gap-4">
-              {review.reviewImageList.slice(0, 3).map((img, i) => (
+              
                 <img
-                  key={i}
-                  src={img.reviewImageUrl}
-                  alt={`리뷰 이미지 ${i + 1}`}
+                  src={review.reviewImageUrl}
+                  alt={`리뷰 이미지`}
                   className="w-[100px] h-[100px] object-cover rounded bg-gray-200"
                 />
-              ))}
+              
             </div>
-          )}
+          
         </div>
       ))}
 
       <div className="text-center mt-8">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navi(-1)}
           className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded"
         >
           목록
@@ -70,11 +76,10 @@ const MyReviewsDetail = () => {
 };
 
 const formatDate = (dateStr) => {
+  if (!dateStr) return "";
   const date = new Date(dateStr);
-  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(
-    2,
-    "0"
-  )}.${String(date.getDate()).padStart(2, "0")}`;
+  if (isNaN(date)) return "날짜 오류";
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
 };
 
 export default MyReviewsDetail;

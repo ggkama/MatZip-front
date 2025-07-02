@@ -45,7 +45,7 @@ const MyReviewsList = () => {
                 className="border-b border-gray-300 hover:bg-gray-100 cursor-pointer"
                 onClick={() => navi("/my-review-detail", { state: { review } })}
               >
-                <td className="py-3">{formatDate(review.reviewDate)}</td>
+                <td className="py-3">{formatDate(review.createDate)}</td>
                 <td
                   className="px-2 max-w-[300px] truncate"
                   title={review.reviewContent}
