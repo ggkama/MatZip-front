@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import FormInput from "./styledComponents/FormInput";
-import FormSelect from "./styledComponents/FormSelect";
-import ConvenienceSelector from "./styledComponents/ConvenienceSelector";
-import DayCheckboxGroup from "./styledComponents/DayCheckboxGroup";
-import HolidayPicker from "./styledComponents/HolidayPicker";
-import ImageUploader from "./styledComponents/ImageUploader";
-import SubmitButton from "./styledComponents/SubmitButton";
+import FormInput from "./styledComponents/util/FormInput";
+import FormSelect from "./styledComponents/util/FormSelect";
+import ConvenienceSelector from "./styledComponents/util/ConvenienceSelector";
+import DayCheckboxGroup from "./styledComponents/util/DayCheckboxGroup";
+import HolidayPicker from "./styledComponents/util/HolidayPicker";
+import ImageUploader from "./styledComponents/util/ImageUploader";
+import SubmitButton from "./styledComponents/util/SubmitButton";
 import convenienceOptions from "./styledComponents/js/convenienceOptions";
 import {
   formatPhoneNumber,
@@ -14,27 +14,44 @@ import {
 } from "./styledComponents/js/phone";
 import axios from "axios";
 
-const RegisterStoreForm = () => {
+const RegisterStoreForm = ({ initialData = null }) => {
   const navigate = useNavigate();
+  const isEdit = !!initialData;
 
-  const [storeName, setStoreName] = useState("");
-  const [categoryAddress, setCategoryAddress] = useState("");
-  const [categoryFoodtype, setCategoryFoodtype] = useState("");
-  const [categoryConvenience, setCategoryConvenience] = useState([]);
-  const [storePhone, setStorePhone] = useState("");
-  const [storeAddress1, setStoreAddress1] = useState("");
-  const [storeAddress2, setStoreAddress2] = useState("");
-  const [openTime, setOpenTime] = useState("");
-  const [closeTime, setCloseTime] = useState("");
-  const [dayOff, setDayOff] = useState([]);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [storeName, setStoreName] = useState(initialData?.storeName || "");
+  const [categoryAddress, setCategoryAddress] = useState(
+    initialData?.categoryAddress || ""
+  );
+  const [categoryFoodtype, setCategoryFoodtype] = useState(
+    initialData?.categoryFoodtype || ""
+  );
+  const [categoryConvenience, setCategoryConvenience] = useState(
+    Array.isArray(initialData?.categoryConvenience)
+      ? initialData.categoryConvenience.map((s) => s.trim())
+      : []
+  );
+  const [storePhone, setStorePhone] = useState(initialData?.storePhone || "");
+  const [storeAddress1, setStoreAddress1] = useState(
+    initialData?.storeAddress1 || ""
+  );
+  const [storeAddress2, setStoreAddress2] = useState(
+    initialData?.storeAddress2 || ""
+  );
+  const [openTime, setOpenTime] = useState(initialData?.openTime || "");
+  const [closeTime, setCloseTime] = useState(initialData?.closeTime || "");
+  const [dayOff, setDayOff] = useState(initialData?.dayOff || []);
+  const [startDate, setStartDate] = useState(initialData?.startDate || null);
+  const [endDate, setEndDate] = useState(initialData?.endDate || null);
   const [images, setImages] = useState([]);
-  const [menuName, setMenuName] = useState("");
+  const [deletedImagePaths, setDeletedImagePaths] = useState([]);
+  const [menuName, setMenuName] = useState(
+    initialData?.menuList?.join(", ") || ""
+  );
   const [menuList, setMenuList] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [count, setCount] = useState("");
+  const [count, setCount] = useState(initialData?.count || "");
+  const [imageList, setImageList] = useState(initialData?.imageList || []);
 
   const dayOptions = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -89,7 +106,7 @@ const RegisterStoreForm = () => {
       setError("시간당 수용 인원을 입력해주세요.");
       return false;
     }
-    if (images.length < 1 || images.length > 5) {
+    if (!isEdit && (images.length < 1 || images.length > 5)) {
       setError("이미지는 최소 1장 이상, 최대 5장까지 등록 가능합니다.");
       return false;
     }
@@ -100,6 +117,7 @@ const RegisterStoreForm = () => {
     if (!validate()) return;
 
     const storeDto = {
+      storeNo: initialData?.storeNo || null,
       storeName,
       categoryAddress,
       categoryFoodtype,
@@ -114,6 +132,7 @@ const RegisterStoreForm = () => {
       startDate,
       endDate,
       count,
+      imageList, // 추가됨
     };
 
     const formData = new FormData();
@@ -122,30 +141,54 @@ const RegisterStoreForm = () => {
       new Blob([JSON.stringify(storeDto)], { type: "application/json" })
     );
     images.forEach((img) => formData.append("images", img));
+    deletedImagePaths.forEach((path) =>
+      formData.append("deletedImagePaths", path)
+    );
 
     const rawTokens = sessionStorage.getItem("tokens");
     const accessToken = rawTokens ? JSON.parse(rawTokens).accessToken : null;
 
     try {
-      await axios.post("http://localhost:8080/api/owner/stores", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      if (isEdit) {
+        await axios.put(
+          "http://localhost:8080/api/owner/stores/update",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        alert("수정이 완료되었습니다.");
+      } else {
+        await axios.post(
+          "http://localhost:8080/api/owner/stores/write",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        alert("등록이 완료되었습니다.");
+      }
 
       setSuccess(true);
       setError(null);
-      alert("등록이 완료되었습니다.");
-      navigate("/owner-page");
+      navigate("/owner-page", { replace: true });
+      window.location.reload();
     } catch (err) {
-      setError("등록에 실패했습니다. 다시 시도해주세요.");
+      setError("저장에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
   return (
     <div className="pt-10 pb-20">
-      <h2 className="text-3xl font-bold mb-8 text-center">내 가게정보 등록</h2>
+      <h2 className="text-3xl font-bold mb-8 text-center">
+        {isEdit ? "가게 정보 수정" : "가게 정보 등록"}
+      </h2>
       <div className="space-y-4 flex flex-col w-[500px] mx-auto">
         <span className="text-sm text-gray-500">* 표시는 필수입니다.</span>
 
@@ -226,11 +269,18 @@ const RegisterStoreForm = () => {
           images={images}
           setImages={setImages}
           setError={setError}
+          deletedImagePaths={deletedImagePaths}
+          setDeletedImagePaths={setDeletedImagePaths}
+          initialImages={
+            Array.isArray(initialData?.imageList) ? initialData.imageList : []
+          }
         />
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {success && (
-          <p className="text-green-600 text-sm">등록이 완료되었습니다.</p>
+          <p className="text-green-600 text-sm">
+            {isEdit ? "수정이 완료되었습니다." : "등록이 완료되었습니다."}
+          </p>
         )}
 
         <SubmitButton onClick={handleSubmit} />

@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import RegisterStoreForm from "../Owner/RegiseterStoreForm/RegisterStoreForm";
 import {
   IoPerson,
   IoLockClosed,
@@ -10,7 +12,42 @@ import {
 } from "react-icons/io5";
 
 const OwnerPage = () => {
-  const navi = useNavigate();
+  const navigate = useNavigate();
+  const [storeData, setStoreData] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const fetchStoreData = async () => {
+    setLoading(true);
+    const rawTokens = sessionStorage.getItem("tokens");
+    const accessToken = rawTokens ? JSON.parse(rawTokens).accessToken : null;
+
+    try {
+      const res = await axios.get("http://localhost:8080/api/owner/stores", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setStoreData(res.data); // 수정 모드
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setStoreData(null); // 등록 모드
+      } else {
+        console.error("가게 정보 조회 실패", error);
+        alert("가게 정보를 불러오는 데 실패했습니다.");
+      }
+    } finally {
+      setShowForm(true);
+      setLoading(false);
+    }
+  };
+
+  const handleRegisterStore = () => {
+    fetchStoreData();
+  };
+
+  if (loading) return <p className="text-center mt-10">로딩 중...</p>;
+  if (showForm) return <RegisterStoreForm initialData={storeData} />;
 
   return (
     <div className="max-w-xl mx-auto pt-10 pb-20 text-center mypage-content">
@@ -29,32 +66,32 @@ const OwnerPage = () => {
         <MenuButton
           icon={<IoPerson size={30} />}
           label="내 정보 수정"
-          onClick={() => navi("/my-info")}
+          onClick={() => navigate("/my-info")}
         />
         <MenuButton
           icon={<IoLockClosed size={30} />}
           label="비밀번호 변경"
-          onClick={() => navi("/new-password")}
+          onClick={() => navigate("/new-password")}
         />
         <MenuButton
           icon={<IoPersonRemoveSharp size={30} />}
           label="회원 탈퇴"
-          onClick={() => navi("/account-delete")}
+          onClick={() => navigate("/account-delete")}
         />
         <MenuButton
           icon={<IoStorefront size={30} />}
           label="가게 정보 등록"
-          onClick={() => navi("/register-store")}
+          onClick={handleRegisterStore}
         />
         <MenuButton
           icon={<IoCalendarNumber size={30} />}
           label="가게 예약 내역"
-          onClick={() => navi("/store-reservation")}
+          onClick={() => navigate("/store-reservation")}
         />
         <MenuButton
           icon={<IoPencil size={30} />}
           label="가게 리뷰 내역"
-          onClick={() => navi("/store-review")}
+          onClick={() => navigate("/store-review")}
         />
       </div>
     </div>
