@@ -17,29 +17,32 @@ const OwnerPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const fetchStoreData = async () => {
+  const fetchStoreData = () => {
     setLoading(true);
     const rawTokens = sessionStorage.getItem("tokens");
     const accessToken = rawTokens ? JSON.parse(rawTokens).accessToken : null;
 
-    try {
-      const res = await axios.get("http://localhost:8080/api/owner/stores", {
+    axios
+      .get("http://localhost:8080/api/owner/stores", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+      })
+      .then((res) => {
+        setStoreData(res.data); // 수정 모드
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 404) {
+          setStoreData(null); // 등록 모드
+        } else {
+          console.error("가게 정보 조회 실패", error);
+          alert("가게 정보를 불러오는 데 실패했습니다.");
+        }
+      })
+      .finally(() => {
+        setShowForm(true);
+        setLoading(false);
       });
-      setStoreData(res.data); // 수정 모드
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        setStoreData(null); // 등록 모드
-      } else {
-        console.error("가게 정보 조회 실패", error);
-        alert("가게 정보를 불러오는 데 실패했습니다.");
-      }
-    } finally {
-      setShowForm(true);
-      setLoading(false);
-    }
   };
 
   const handleRegisterStore = () => {
