@@ -10,6 +10,7 @@ const HolidayPicker = ({ startDate, setStartDate, endDate, setEndDate }) => (
       endDate={endDate}
       dateFormat="yyyy.MM.dd"
       placeholderText="시작일"
+      isClearable
       className="border px-4 py-2 rounded-md w-[228px] border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
     />
     <span>~</span>
@@ -22,6 +23,7 @@ const HolidayPicker = ({ startDate, setStartDate, endDate, setEndDate }) => (
       minDate={startDate}
       dateFormat="yyyy.MM.dd"
       placeholderText="종료일"
+      isClearable
       className="border px-4 py-2 rounded-md w-[228px] border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
     />
   </div>
