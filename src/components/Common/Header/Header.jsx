@@ -1,39 +1,61 @@
 import React, { useState, useEffect } from "react";
 import logo from "../../../assets/img/logo.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
-  const navi = useNavigate();
-  const [isLogin, setIsLogin] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  /* 로그인 상태 확인 */
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState(""); // 🔹 사용자 역할 저장용
+
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      setIsLogin(!token);
-    }
-  }, [isLogin]);
+    const raw = sessionStorage.getItem("tokens");
+    const accessToken = raw ? JSON.parse(raw).accessToken : null;
 
-  /* 로그아웃 */
-  /* 토큰 삭제 메서드 만들고 다시 수정해야함 */
+    if (accessToken) {
+      setIsLoggedIn(true);
+
+      try {
+        const decoded = jwtDecode(accessToken);
+        const userRole = decoded.userRole || decoded.role || ""; // JWT payload에 있는 role 키 확인
+        setRole(userRole);
+      } catch (e) {
+        console.error("JWT 디코딩 실패:", e);
+        setRole("");
+      }
+    } else {
+      setIsLoggedIn(false);
+      setRole("");
+    }
+  }, [location.pathname]);
+
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    setIsLogin(false);
+    sessionStorage.removeItem("tokens");
+    setIsLoggedIn(false);
+    setRole("");
+    navigate("/");
   };
+
+  // 🔹 ROLE에 따라 마이페이지 경로 변경
+  const myPagePath = role === "ROLE_OWNER" ? "/owner-page" : "/my-page";
 
   return (
     <header className="border-b border-gray-200 bg-white">
-      <div className="header-container flex justify-between items-center py-2 max-w-5xl">
-        <div className="flex items-center gap-2">
+      <div className="header-container flex justify-between items-center py-2 max-w-5xl mx-auto px-4">
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           <img src={logo} alt="MatZip" className="w-20 h-20" />
         </div>
         <div className="text-right text-sm">
-          {isLogin ? (
+          {isLoggedIn ? (
             <>
               <span
                 className="text-black cursor-pointer"
-                onClick={() => navi("/my-page")}
+                onClick={() => navigate(myPagePath)}
               >
                 마이페이지
               </span>
@@ -49,14 +71,14 @@ const Header = () => {
             <>
               <span
                 className="text-black cursor-pointer"
-                onClick={() => navi("/login")}
+                onClick={() => navigate("/login")}
               >
                 로그인
               </span>
               <span className="mx-3 text-gray-300">|</span>
               <span
                 className="text-black cursor-pointer"
-                onClick={() => navi("/signup")}
+                onClick={() => navigate("/signup")}
               >
                 회원가입
               </span>
@@ -66,10 +88,25 @@ const Header = () => {
       </div>
 
       <nav className="bg-orange-500">
-        <ul className="flex justify-center gap-15 text-white font-semibold text-xl py-4">
-          <li className="hover:underline cursor-pointer">HOME</li>
-          <li className="hover:underline cursor-pointer">맛집</li>
-          <li className="hover:underline cursor-pointer">공지사항</li>
+        <ul className="flex justify-center gap-16 text-white font-semibold text-xl py-4">
+          <li
+            className="hover:underline cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            HOME
+          </li>
+          <li
+            className="hover:underline cursor-pointer"
+            onClick={() => navigate("/stores")}
+          >
+            맛집
+          </li>
+          <li
+            className="hover:underline cursor-pointer"
+            onClick={() => navigate("/notice")}
+          >
+            공지사항
+          </li>
         </ul>
       </nav>
     </header>
