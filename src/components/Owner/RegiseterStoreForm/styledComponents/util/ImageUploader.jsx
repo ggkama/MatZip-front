@@ -17,6 +17,7 @@ const ImageUploader = ({
     }
     setImages(total);
     setError(null);
+    e.target.value = null;
   };
 
   const handleRemoveNew = (index) => {
