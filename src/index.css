@@ -125,6 +125,7 @@ button {
 .react-datepicker__day--today {
   border: 1px solid #f97316; /* 오늘 날짜 테두리도 오렌지로 */
 }
+
 /* @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
