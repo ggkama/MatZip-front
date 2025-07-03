@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import logo from "../../../assets/img/logo.svg";
 import { useNavigate, useLocation } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import axiosInstance from "../../../api/axiosInstance";
 
 const Header = () => {

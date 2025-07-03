@@ -23,6 +23,9 @@ import OwnerReservationDetail from "./components/Owner/OwnerReservationDetail";
 import OwnerReviewList from "./components/Owner/OwnerReviewList";
 import OwnerReviewDetail from "./components/Owner/OwnerReviewDetail";
 import ReservationForm from "./components/Reservation/ReservationForm";
+import Admin from "./components/Admin/Admin";
+import UserList from "./components/Admin/ManageUser/UserList";
+import UserDetail from "./components/Admin/ManageUser/UserDetail";
 
 function App() {
   return (
@@ -63,6 +66,11 @@ function App() {
           <Route path="/store-review" element={<OwnerReviewList />} />
           <Route path="/store-review-detail" element={<OwnerReviewDetail />} />
           <Route path="/reservaion-form" element={<ReservationForm />} />
+
+          {/* 관리자 페이지 */}
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/user-list" element={<UserList />} />
+          <Route path="/admin/user/:userNo" element={<UserDetail />} />
         </Routes>
       </div>
       <Footer />
