@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import SubmitButton from "./styledComponents/util/SubmitButton";
 import {
   formatPhoneNumber,
@@ -20,8 +20,10 @@ import ImageSection from "./styledComponents/parts/ImageSection";
 import RegionSection from "./styledComponents/parts/RegionSection";
 import axiosInstance from "../../../api/axiosInstance";
 
-const RegisterStoreForm = ({ initialData = null }) => {
+const RegisterStoreForm = () => {
   const navi = useNavigate();
+  const location = useLocation();
+  const initialData = location.state?.initialData || null;
   const isEdit = !!initialData;
 
   const [storeName, setStoreName] = useState(initialData?.storeName || "");
@@ -126,6 +128,7 @@ const RegisterStoreForm = ({ initialData = null }) => {
     const filteredImageList = imageList.filter(
       (path) => !deletedImagePaths.includes(path)
     );
+
     const storeDto = {
       storeNo: initialData?.storeNo || null,
       storeName,
@@ -165,9 +168,6 @@ const RegisterStoreForm = ({ initialData = null }) => {
         formData.append("images", image);
     });
 
-    const rawTokens = sessionStorage.getItem("tokens");
-    const accessToken = rawTokens ? JSON.parse(rawTokens).accessToken : null;
-
     const request = isEdit
       ? axiosInstance.put("/api/owner/stores/update", formData, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -178,10 +178,9 @@ const RegisterStoreForm = ({ initialData = null }) => {
 
     request
       .then(() => {
-        console.log("등록 성공, 페이지 이동 시도"); // 확인 로그
-        alert(isEdit ? "수정이 완료되었습니다." : "등록이 완료되었습니다.");
         setSuccess(true);
         setError(null);
+        alert(isEdit ? "수정이 완료되었습니다." : "등록이 완료되었습니다.");
         navi("/owner-page");
       })
       .catch(() => {
@@ -245,14 +244,12 @@ const RegisterStoreForm = ({ initialData = null }) => {
             Array.isArray(initialData?.imageList) ? initialData.imageList : []
           }
         />
-
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {success && (
           <p className="text-green-600 text-sm">
             {isEdit ? "수정이 완료되었습니다." : "등록이 완료되었습니다."}
           </p>
         )}
-
         <SubmitButton onClick={handleSubmit} />
       </div>
     </div>
