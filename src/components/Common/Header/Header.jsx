@@ -2,29 +2,21 @@ import React, { useState, useEffect } from "react";
 import logo from "../../../assets/img/logo.svg";
 import { useNavigate, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import axiosInstance from "../../../api/axiosInstance";
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState(""); // 🔹 사용자 역할 저장용
+  const [role, setRole] = useState("");
 
   useEffect(() => {
-    const raw = sessionStorage.getItem("tokens");
-    const accessToken = raw ? JSON.parse(raw).accessToken : null;
-
-    if (accessToken) {
+    const userInfo = sessionStorage.getItem("user");
+    if (userInfo) {
+      const user = JSON.parse(userInfo);
       setIsLoggedIn(true);
-
-      try {
-        const decoded = jwtDecode(accessToken);
-        const userRole = decoded.userRole || decoded.role || ""; // JWT payload에 있는 role 키 확인
-        setRole(userRole);
-      } catch (e) {
-        console.error("JWT 디코딩 실패:", e);
-        setRole("");
-      }
+      setRole(user.userRole || "");
     } else {
       setIsLoggedIn(false);
       setRole("");
@@ -32,13 +24,25 @@ const Header = () => {
   }, [location.pathname]);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("tokens");
-    setIsLoggedIn(false);
-    setRole("");
-    navigate("/");
+    axiosInstance
+      .post("/api/auth/logout")
+      .then((response) => {
+        if (response.data.code === "S204") {
+          sessionStorage.removeItem("user");
+          sessionStorage.removeItem("tokens");
+
+          setIsLoggedIn(false);
+          setRole("");
+          navigate("/");
+          alert(response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  // 🔹 ROLE에 따라 마이페이지 경로 변경
+  // ROLE에 따른 마이페이지 경로 설정
   const myPagePath = role === "ROLE_OWNER" ? "/owner-page" : "/my-page";
 
   return (
