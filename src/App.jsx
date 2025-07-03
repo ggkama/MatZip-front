@@ -26,6 +26,8 @@ import ReservationForm from "./components/Reservation/ReservationForm";
 import NoticeList from "./components/Notice/NoticeList";
 import NoticeDetail from "./components/Notice/NoticeDetail";
 import NoticeWriteForm from "./components/Notice/NoticeWriteForm";
+import StoreDetail from "./components/Store/StoreDetail";
+import StoreList from "./components/Store/StoreList";
 
 function App() {
   return (
@@ -70,6 +72,10 @@ function App() {
           <Route path="/store-review" element={<OwnerReviewList />} />
           <Route path="/store-review-detail" element={<OwnerReviewDetail />} />
           <Route path="/reservaion-form" element={<ReservationForm />} />
+
+          <Route path="/stores" element={<StoreList />} />
+           {/* 가게 상세페이지 */}
+          <Route path="/store" element={<StoreDetail />} />
         </Routes>
       </div>
       <Footer />
