@@ -18,29 +18,36 @@ const Login = () => {
       .post("/api/auth/login", data, { auth: false })
       .then((response) => {
         if (response.data.code === "S203") {
-          const {
-            accessToken,
-            refreshToken,
-            userNo,
-            userId,
-            userName,
-            userNickName,
-            userRole,
-          } = response.data.data;
+          const userInfo = response.data.data;
 
-          // ✅ 세션에 저장
-          const tokens = {
-            accessToken,
-            refreshToken,
-            userNo,
-            userId,
-            userName,
-            userNickName,
-            userRole,
-          };
-          sessionStorage.setItem("tokens", JSON.stringify(tokens));
+          // 세션스토리지에 사용자 정보 저장
+          sessionStorage.setItem(
+            "tokens",
+            JSON.stringify({
+              accessToken: userInfo.accessToken,
+              refreshToken: userInfo.refreshToken,
+            })
+          );
+
+          sessionStorage.setItem(
+            "user",
+            JSON.stringify({
+              userNo: userInfo.userNo,
+              userName: userInfo.userName,
+              userNickName: userInfo.userNickName,
+              userRole: userInfo.userRole,
+            })
+          );
+
           alert(response.data.message);
-          navi("/");
+
+          if (userInfo.userRole === "ROLE_ADMIN") {
+            navi("/admin");
+          } else if (userInfo.userRole === "ROLE_OWNER") {
+            navi("/owner-page");
+          } else {
+            navi("/");
+          }
         }
       })
       .catch((error) => {

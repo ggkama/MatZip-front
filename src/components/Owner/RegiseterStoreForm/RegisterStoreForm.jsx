@@ -52,6 +52,7 @@ const RegisterStoreForm = ({ initialData = null }) => {
   const [success, setSuccess] = useState(false);
   const [count, setCount] = useState(initialData?.count || "");
   const [imageList, setImageList] = useState(initialData?.imageList || []);
+  const [changedImages, setChangedImages] = useState([]);
 
   const dayOptions = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -113,7 +114,11 @@ const RegisterStoreForm = ({ initialData = null }) => {
     return true;
   };
 
-  const handleSubmit = async () => {
+  const filteredImageList = imageList.filter(
+    (path) => !deletedImagePaths.includes(path)
+  );
+
+  const handleSubmit = () => {
     if (!validate()) return;
 
     const storeDto = {
@@ -132,7 +137,7 @@ const RegisterStoreForm = ({ initialData = null }) => {
       startDate,
       endDate,
       count,
-      imageList, // 추가됨
+      imageList: filteredImageList,
     };
 
     const formData = new FormData();
@@ -140,48 +145,57 @@ const RegisterStoreForm = ({ initialData = null }) => {
       "storeDto",
       new Blob([JSON.stringify(storeDto)], { type: "application/json" })
     );
-    images.forEach((img) => formData.append("images", img));
-    deletedImagePaths.forEach((path) =>
-      formData.append("deletedImagePaths", path)
+    // 삭제할 이미지 목록
+    formData.append(
+      "deletedImagePaths",
+      new Blob([JSON.stringify(deletedImagePaths)], {
+        type: "application/json",
+      })
     );
+
+    // 이미지 교체할 경우
+    changedImages.forEach(({ oldImage, newImage }) => {
+      formData.append("changedOldImages", oldImage); // 문자열
+      formData.append("changedNewImages[]", newImage); // 파일 (배열 형식으로!)
+    });
+
+    console.log("업로드할 이미지 수:", images.length);
+    images.forEach((img, idx) => {
+      console.log(`이미지 ${idx + 1}:`, img.name);
+    });
 
     const rawTokens = sessionStorage.getItem("tokens");
     const accessToken = rawTokens ? JSON.parse(rawTokens).accessToken : null;
 
-    try {
-      if (isEdit) {
-        await axios.put(
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    const request = isEdit
+      ? axios.put(
           "http://localhost:8080/api/owner/stores/update",
           formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        alert("수정이 완료되었습니다.");
-      } else {
-        await axios.post(
+          config
+        )
+      : axios.post(
           "http://localhost:8080/api/owner/stores/write",
           formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
+          config
         );
-        alert("등록이 완료되었습니다.");
-      }
 
-      setSuccess(true);
-      setError(null);
-      navigate("/owner-page", { replace: true });
-      window.location.reload();
-    } catch (err) {
-      setError("저장에 실패했습니다. 다시 시도해주세요.");
-    }
+    request
+      .then(() => {
+        alert(isEdit ? "수정이 완료되었습니다." : "등록이 완료되었습니다.");
+        setSuccess(true);
+        setError(null);
+        navigate("/owner-page", { replace: true });
+        window.location.reload();
+      })
+      .catch((err) => {
+        setError("저장에 실패했습니다. 다시 시도해주세요.");
+      });
   };
 
   return (
