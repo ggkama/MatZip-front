@@ -28,6 +28,7 @@ import UserList from "./components/Admin/ManageUser/UserList";
 import UserDetail from "./components/Admin/ManageUser/UserDetail";
 import OwnerList from "./components/Admin/ManageOwner/OwnerList";
 import OwnerDetail from "./components/Admin/ManageOwner/OwnerDetail";
+import RegisterOwner from "./components/Mypage/RegisterOwner/RegisterOwner";
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
           <Route path="/review-form" element={<WriteReviewForm />} />
           <Route path="/my-review-list" element={<MyReviewsList />} />
           <Route path="/my-review-detail" element={<MyReviewsDetail />} />
+          <Route path="/my-register-owner" element={<RegisterOwner />} />
           {/* 사장님 마이페이지 */}
           <Route path="/owner-page" element={<OwnerPage />} />
           <Route path="/register-store" element={<RegisterStoreForm />} />
