@@ -26,6 +26,8 @@ import ReservationForm from "./components/Reservation/ReservationForm";
 import Admin from "./components/Admin/Admin";
 import UserList from "./components/Admin/ManageUser/UserList";
 import UserDetail from "./components/Admin/ManageUser/UserDetail";
+import OwnerList from "./components/Admin/ManageOwner/OwnerList";
+import OwnerDetail from "./components/Admin/ManageOwner/OwnerDetail";
 
 function App() {
   return (
@@ -71,6 +73,8 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/user-list" element={<UserList />} />
           <Route path="/admin/user/:userNo" element={<UserDetail />} />
+          <Route path="/admin/owner-list" element={<OwnerList />} />
+          <Route path="/admin/owner/:registerNo" element={<OwnerDetail />} />
         </Routes>
       </div>
       <Footer />

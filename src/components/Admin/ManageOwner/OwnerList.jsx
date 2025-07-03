@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosInstance";
 import Pagination from "../../Pagenation/Pagenation";
 
-const UserList = () => {
+const OwnerList = () => {
   const navi = useNavigate();
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -13,9 +13,11 @@ const UserList = () => {
   useEffect(() => {
     const userList = () => {
       axiosInstance
-        .get(`/api/admin/manage/userList?page=${currentPage}`)
+        .get(`/api/admin/manage/ownerList?page=${currentPage}`)
         .then((response) => {
-          setUsers(response.data.userList);
+          console.log(response.data.ownerList);
+
+          setUsers(response.data.ownerList);
           setTotalPages(response.data.totalPages);
         })
         .catch((error) => {
@@ -26,17 +28,8 @@ const UserList = () => {
     userList();
   }, [currentPage]);
 
-  const convertRole = (role) => {
-    if (role === "ROLE_ADMIN") {
-      return "관리자";
-    } else if (role === "ROLE_OWNER") {
-      return "사장님";
-    } else {
-      return "사용자";
-    }
-  };
-
-  const convertStatus = (isDeleted) => (isDeleted === "Y" ? "탈퇴" : "사용중");
+  const convertStatus = (status) =>
+    status === "Y" ? "처리 완료" : "처리 대기";
 
   return (
     <div className="flex flex-col items-center pt-10 pb-20 px-4">
@@ -49,42 +42,50 @@ const UserList = () => {
           뒤로가기
         </button>
 
-        <h2 className="text-2xl font-bold text-center mb-5">회원 리스트</h2>
+        <h2 className="text-2xl font-bold text-center mb-5">
+          사장님 신청 내역
+        </h2>
 
         <table className="w-full border-t-2 border-b-2 border-black text-sm text-center table-fixed">
           <thead>
             <tr className="border-b border-gray-500 font-semibold">
               <th className="py-3">신청자명</th>
               <th className="py-3">아이디</th>
-              <th className="py-3">가입형태</th>
-              <th className="py-3">가입일</th>
-              <th className="py-3">회원 상태</th>
+              <th className="py-3">신청일</th>
+              <th className="py-3">신청 상태</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr
-                key={user.userNo}
-                className="border-b border-gray-300 hover:bg-gray-100"
-                onClick={() => navi(`/admin/user/${user.userNo}`)}
-              >
-                <td className="py-3">{user.userName}</td>
-                <td className="py-3">{user.userId}</td>
-                <td className="py-3">{convertRole(user.userRole)}</td>
-                <td className="py-3">{user.enrollDate}</td>
-                <td className="py-3">
-                  <span
-                    className={`inline-block px-3 py-1 rounded text-xs font-medium ${
-                      user.isDeleted === "Y"
-                        ? "bg-red-500 text-white"
-                        : "bg-orange-100 text-gray-700"
-                    }`}
-                  >
-                    {convertStatus(user.isDeleted)}
-                  </span>
+            {users.length > 0 ? (
+              users.map((user) => (
+                <tr
+                  key={user.registerNo}
+                  className="border-b border-gray-300 hover:bg-gray-100"
+                  onClick={() => navi(`/admin/owner/${user.registerNo}`)}
+                >
+                  <td className="py-3">{user.userName}</td>
+                  <td className="py-3">{user.userId}</td>
+                  <td className="py-3">{user.requestDate.split("T")[0]}</td>
+                  <td className="py-3">
+                    <span
+                      className={`inline-block px-3 py-1 rounded text-xs font-medium ${
+                        user.status === "N"
+                          ? "bg-red-500 text-white"
+                          : "bg-orange-100 text-gray-700"
+                      }`}
+                    >
+                      {convertStatus(user.status)}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="py-6 text-gray-400">
+                  사장님 신청 내역이 없습니다.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
 
@@ -98,4 +99,4 @@ const UserList = () => {
   );
 };
 
-export default UserList;
+export default OwnerList;

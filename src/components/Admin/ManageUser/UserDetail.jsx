@@ -25,6 +25,7 @@ const UserDetail = () => {
     const confirm = window.confirm(
       `${user.userName}님을 탈퇴처리하시겠습니까?`
     );
+    if (!confirm) return;
 
     axiosInstance
       .post("/api/admin/manage/user/delete", { userNo })
