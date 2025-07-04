@@ -17,8 +17,9 @@ build/
 .DS_Store
 Thumbs.db
 
+node_modules/*
+
 application-private.yml
+
 .vscode/*
 
-
-node_modules

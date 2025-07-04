@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiService } from "../../api/apiService";
 import Pagination from "../../components/Pagenation/Pagenation";
-import { jwtDecode } from "jwt-decode";
 
 const NoticeList = () => {
   const [notices, setNotices] = useState([]);

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { apiService } from "../../api/apiService";
-import { jwtDecode } from "jwt-decode";
 
 const NoticeDetail = () => {
   const [notice, setNotice] = useState(null);
@@ -9,7 +8,6 @@ const NoticeDetail = () => {
   const navi = useNavigate();
   const noticeNo = params.get("noticeNo");
 
-  
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -73,7 +71,9 @@ const NoticeDetail = () => {
           {isAdmin && (
             <div className="mt-6 space-x-4">
               <button
-                onClick={() => navi(`/notice-write?mode=edit&noticeNo=${notice.noticeNo}`)}
+                onClick={() =>
+                  navi(`/notice-write?mode=edit&noticeNo=${notice.noticeNo}`)
+                }
                 className="px-4 py-2 bg-blue-500 text-white rounded"
               >
                 수정
