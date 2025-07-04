@@ -22,8 +22,3 @@ node_modules/*
 application-private.yml
 
 .vscode/*
-
-<<<<<<< HEAD
-node_modules
-=======
->>>>>>> d8e0d00ee10293f6c0f3d0d82d9abc5316958989
