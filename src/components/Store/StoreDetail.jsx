@@ -2,8 +2,10 @@ import React from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { FaMapMarkerAlt, FaStar, FaPhone, FaClock } from "react-icons/fa";
 import testImg from "../../assets/img/005.jpg";
+
 const StoreDetail = () => {
   const navi = useNavigate();
+
   const store = {
     storeNo: 1,
     name: "명동교자 본점",
@@ -14,9 +16,11 @@ const StoreDetail = () => {
     conveniences: ["배달 가능", "주차 가능"],
     menus: ["칼국수", "만두", "백김치", "공깃밥"],
   };
+
   const handleReserve = () => {
     navi(`/reservaion-form`);
   };
+
   return (
     <>
       <div className="max-w-3xl mx-auto">
@@ -29,9 +33,11 @@ const StoreDetail = () => {
               className="w-full h-full object-cover"
             />
           </div>
+
           {/* 우측: 매장 정보 */}
           <div className="flex-grow">
             <h2 className="text-3xl font-bold mb-6">{store.name}</h2>
+
             <ul className="space-y-3 text-sm text-gray-800">
               <li className="flex items-center gap-2 text-[16px]">
                 <FaMapMarkerAlt className="text-orange-500" />
@@ -58,7 +64,9 @@ const StoreDetail = () => {
             </div>
           </div>
         </div>
+
         {/* 리뷰/사진 영역은 생략 가능 */}
+
         <div className="mt-10 text-center">
           <button
             onClick={handleReserve}
