@@ -51,7 +51,11 @@ const MyPage = () => {
           label="내 리뷰 내역"
           onClick={() => navi("/my-review-list")}
         />
-        <MenuButton icon={<IoPeopleSharp size={30} />} label="사장님 신청" />
+        <MenuButton
+          icon={<IoPeopleSharp size={30} />}
+          label="사장님 신청"
+          onClick={() => navi("/my-register-owner")}
+        />
       </div>
     </div>
   );

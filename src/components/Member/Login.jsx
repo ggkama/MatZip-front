@@ -43,8 +43,6 @@ const Login = () => {
 
           if (userInfo.userRole === "ROLE_ADMIN") {
             navi("/admin");
-          } else if (userInfo.userRole === "ROLE_OWNER") {
-            navi("/owner-page");
           } else {
             navi("/");
           }

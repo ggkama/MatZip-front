@@ -14,10 +14,10 @@ import { dateUtils } from "./styleComponents/js/dateUtils";
 const ReservationForm = () => {
   const navigate = useNavigate();
   const { storeNo: paramStoreNo } = useParams();
-  const storeNo = paramStoreNo || "22";
+  const storeNo = paramStoreNo || "81";
   const [storeInfo, setStoreInfo] = useState({
     name: "",
-    openTime: "", // ← "" 또는 null (단, 이후 코드에서 null 체크 필수)
+    openTime: "",
     closeTime: "",
     dayOff: [],
     startDate: null,
@@ -34,7 +34,7 @@ const ReservationForm = () => {
 
   useEffect(() => {
     const fetchReservationInfo = () => {
-      const url = `/api/reservation/${storeNo || 22}`;
+      const url = `/api/reservation/store/${storeNo || 81}`;
       axiosInstance
         .get(url)
         .then((res) => {
