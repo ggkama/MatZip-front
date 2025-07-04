@@ -10,7 +10,7 @@ import Mypage from "./components/Mypage/MyInfo/Mypage";
 import PasswordInput from "./components/Mypage/MyInfo/PasswordInput";
 import MyInfoForm from "./components/Mypage/MyInfo/MyInfoForm";
 import ChangePassword from "./components/Mypage/MyInfo/NewPassword";
-import MyReservaitonList from "./components/Mypage/Reservation/MyReservatonList";
+import MyReservaitonList from "./components/Mypage/Reservation/MyReservationList";
 import AccountDelete from "./components/Mypage/MyInfo/AccountDelete";
 import MyReservationDetail from "./components/Mypage/Reservation/MyReservationDetail";
 import WriteReviewForm from "./components/Mypage/Review/WriteReviewForm";
@@ -37,6 +37,7 @@ import NoticeList from "./components/Notice/NoticeList";
 import NoticeDetail from "./components/Notice/NoticeDetail";
 import NoticeWriteForm from "./components/Notice/NoticeWriteForm";
 import StoreDetail from "./components/Store/StoreDetail";
+import StoreList from "./components/Store/StoreList";
 
 function App() {
   return (
@@ -99,7 +100,8 @@ function App() {
             element={<ReviewDetailAdmin />}
           />
           {/* 가게 상세페이지 */}
-          <Route path="/store" element={<StoreDetail />} />
+          <Route path="/store-detail/:storeNo" element={<StoreDetail />} />
+          <Route path="/stores" element={<StoreList />} />
         </Routes>
       </div>
       <Footer />
