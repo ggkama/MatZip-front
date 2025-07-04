@@ -1,5 +1,3 @@
-// utils/phone.js
-
 export const formatPhoneNumber = (value) => {
   const onlyNums = value.replace(/[^0-9]/g, "");
 

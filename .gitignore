@@ -21,7 +21,5 @@ node_modules/*
 
 application-private.yml
 
-.vscode/*2
-
 .vscode/*
 

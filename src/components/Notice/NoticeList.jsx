@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiService } from "../../api/apiService";
 import Pagination from "../../components/Pagenation/Pagenation";
@@ -7,20 +7,34 @@ const NoticeList = () => {
   const [notices, setNotices] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [role, setRole] = useState(""); // admin 확인
 
   const navi = useNavigate();
 
   useEffect(() => {
     apiService
-      .get(`/api/notice`, { params: { page: page, size: 10 } })
+      .get(`/api/notice`, { params: { page: page, size: 5 } })
       .then((res) => {
-        console.log("공지사항 응답 : ", res.data)
         setNotices(res.data.noticeList);
-        setTotalPages(res.data.data.totalPages);
+
+        setTotalPages(res.data.totalPages);
       })
       .catch((err) => {
         console.error("공지사항 불러오기 실패:", err);
       });
+
+    const raw = sessionStorage.getItem("tokens");
+    const accessToken = raw ? JSON.parse(raw).accessToken : null;
+    if (accessToken) {
+      try {
+        const decoded = jwtDecode(accessToken);
+        setRole(decoded.userRole);
+      } catch {
+        setRole("");
+      }
+    } else {
+      setRole("");
+    }
   }, [page]);
 
   const handleRowClick = (noticeNo) => {
@@ -45,7 +59,7 @@ const NoticeList = () => {
         </thead>
         <tbody>
           {notices.length > 0 ? (
-            notices.map((notice, index) => (
+            notices.map((notice) => (
               <tr
                 key={notice.noticeNo}
                 onClick={() => handleRowClick(notice.noticeNo)}
@@ -73,12 +87,14 @@ const NoticeList = () => {
           totalPages={totalPages}
           onPageChange={setPage}
         />
-        <button
-          onClick={handleWriteClick}
-          className="bg-orange-400 text-white px-4 py-2 rounded"
-        >
-          공지사항 작성
-        </button>
+        {role === "ROLE_ADMIN" && (
+          <button
+            onClick={handleWriteClick}
+            className="bg-orange-400 text-white px-4 py-2 rounded"
+          >
+            공지사항 작성
+          </button>
+        )}
       </div>
     </div>
   );

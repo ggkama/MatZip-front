@@ -1,9 +1,10 @@
-import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { apiService } from "../../../api/apiService";
+import { useState } from "react";
+
 
 const WriteReviewForm = () => {
-  const [grade, setGrade] = useState(5);
+  const [grade, setGrade] = useState("");
   const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
