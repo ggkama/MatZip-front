@@ -89,7 +89,7 @@ function App() {
           <Route path="/admin/owner-list" element={<OwnerList />} />
           <Route path="/admin/owner/:registerNo" element={<OwnerDetail />} />
           {/* 가게 상세페이지 */}
-          <Route path="/store" element={<StoreDetail />} />
+          <Route path="/store-detail/:storeNo" element={<StoreDetail />} />
           <Route path="/stores" element={<StoreList />} />
         </Routes>
       </div>
