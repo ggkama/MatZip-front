@@ -29,6 +29,10 @@ import UserDetail from "./components/Admin/ManageUser/UserDetail";
 import OwnerList from "./components/Admin/ManageOwner/OwnerList";
 import OwnerDetail from "./components/Admin/ManageOwner/OwnerDetail";
 import RegisterOwner from "./components/Mypage/RegisterOwner/RegisterOwner";
+import StoreListAdmin from "./components/Admin/ManageStore/StoreListAdmin";
+import ReviewListAdmin from "./components/Admin/ManageReview/ReviewListAdmin";
+import StoreDetailAdmin from "./components/Admin/ManageStore/StoreDetailAdmin";
+import ReviewDetailAdmin from "./components/Admin/ManageReview/ReviewDetailAdmin";
 
 function App() {
   return (
@@ -77,6 +81,13 @@ function App() {
           <Route path="/admin/user/:userNo" element={<UserDetail />} />
           <Route path="/admin/owner-list" element={<OwnerList />} />
           <Route path="/admin/owner/:registerNo" element={<OwnerDetail />} />
+          <Route path="/admin/store-list" element={<StoreListAdmin />} />
+          <Route path="/admin/store/:storeNo" element={<StoreDetailAdmin />} />
+          <Route path="/admin/review-list" element={<ReviewListAdmin />} />
+          <Route
+            path="/admin/review/:reivewNo"
+            element={<ReviewDetailAdmin />}
+          />
         </Routes>
       </div>
       <Footer />
