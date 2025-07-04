@@ -33,6 +33,7 @@ import NoticeList from "./components/Notice/NoticeList";
 import NoticeDetail from "./components/Notice/NoticeDetail";
 import NoticeWriteForm from "./components/Notice/NoticeWriteForm";
 import StoreDetail from "./components/Store/StoreDetail";
+import StoreList from "./components/Store/StoreList";
 
 function App() {
   return (
@@ -89,6 +90,7 @@ function App() {
           <Route path="/admin/owner/:registerNo" element={<OwnerDetail />} />
           {/* 가게 상세페이지 */}
           <Route path="/store" element={<StoreDetail />} />
+          <Route path="/stores" element={<StoreList />} />
         </Routes>
       </div>
       <Footer />

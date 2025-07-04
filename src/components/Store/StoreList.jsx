@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiService } from "../../api/apiService"; // 실제 경로에 맞게
+import { apiService } from "../../api/apiService"; 
 
 const PAGE_SIZE = 5;
 
@@ -107,7 +107,7 @@ const StoreList = () => {
           ))}
         </div>
 
-        {/* 검색/필터 */}
+        {/* 검색 & 필터 */}
         <div className="flex justify-center items-center gap-2 mb-6">
           <input
             type="text"
