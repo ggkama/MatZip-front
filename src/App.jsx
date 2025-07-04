@@ -29,6 +29,10 @@ import UserDetail from "./components/Admin/ManageUser/UserDetail";
 import OwnerList from "./components/Admin/ManageOwner/OwnerList";
 import OwnerDetail from "./components/Admin/ManageOwner/OwnerDetail";
 import RegisterOwner from "./components/Mypage/RegisterOwner/RegisterOwner";
+import NoticeList from "./components/Notice/NoticeList";
+import NoticeDetail from "./components/Notice/NoticeDetail";
+import NoticeWriteForm from "./components/Notice/NoticeWriteForm";
+import StoreDetail from "./components/Store/StoreDetail";
 
 function App() {
   return (
@@ -59,6 +63,11 @@ function App() {
           <Route path="/my-review-list" element={<MyReviewsList />} />
           <Route path="/my-review-detail" element={<MyReviewsDetail />} />
           <Route path="/my-register-owner" element={<RegisterOwner />} />
+          {/* 공지사항 */}
+          <Route path="/notice" element={<NoticeList />} />
+          <Route path="/notice-detail" element={<NoticeDetail />} />
+          <Route path="/notice-write" element={<NoticeWriteForm />} />
+
           {/* 사장님 마이페이지 */}
           <Route path="/owner-page" element={<OwnerPage />} />
           <Route path="/register-store" element={<RegisterStoreForm />} />
@@ -69,6 +78,7 @@ function App() {
           />
           <Route path="/store-review" element={<OwnerReviewList />} />
           <Route path="/store-review-detail" element={<OwnerReviewDetail />} />
+          {/* 예약하기 */}
           <Route path="/reservaion-form" element={<ReservationForm />} />
 
           {/* 관리자 페이지 */}
@@ -77,6 +87,8 @@ function App() {
           <Route path="/admin/user/:userNo" element={<UserDetail />} />
           <Route path="/admin/owner-list" element={<OwnerList />} />
           <Route path="/admin/owner/:registerNo" element={<OwnerDetail />} />
+          {/* 가게 상세페이지 */}
+          <Route path="/store" element={<StoreDetail />} />
         </Routes>
       </div>
       <Footer />

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import RegisterStoreForm from "../Owner/RegiseterStoreForm/RegisterStoreForm";
+import axiosInstance from "../../api/axiosInstance";
 import {
   IoPerson,
   IoLockClosed,
@@ -13,41 +14,29 @@ import {
 
 const OwnerPage = () => {
   const navigate = useNavigate();
-  const [storeData, setStoreData] = useState(null);
-  const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const fetchStoreData = async () => {
-    setLoading(true);
-    const rawTokens = sessionStorage.getItem("tokens");
-    const accessToken = rawTokens ? JSON.parse(rawTokens).accessToken : null;
-
-    try {
-      const res = await axios.get("http://localhost:8080/api/owner/stores", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      setStoreData(res.data); // 수정 모드
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        setStoreData(null); // 등록 모드
-      } else {
-        console.error("가게 정보 조회 실패", error);
-        alert("가게 정보를 불러오는 데 실패했습니다.");
-      }
-    } finally {
-      setShowForm(true);
-      setLoading(false);
-    }
-  };
-
   const handleRegisterStore = () => {
-    fetchStoreData();
+    setLoading(true);
+    axiosInstance
+      .get("/api/owner/stores")
+      .then((res) => {
+        navigate("/register-store", { state: { initialData: res.data } }); // 수정 모드
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 404) {
+          navigate("/register-store", { state: { initialData: null } }); // 등록 모드
+        } else {
+          console.error("가게 정보 조회 실패", error);
+          alert("가게 정보를 불러오는 데 실패했습니다.");
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   if (loading) return <p className="text-center mt-10">로딩 중...</p>;
-  if (showForm) return <RegisterStoreForm initialData={storeData} />;
 
   return (
     <div className="max-w-xl mx-auto pt-10 pb-20 text-center mypage-content">

@@ -40,6 +40,10 @@ axiosInstance.interceptors.response.use(
       console.error(`안내 [${res.status}, ${code}]: ${message}`);
     }
 
+    if (message) {
+      console.error(`오류 [${code}]: ${message}`);
+    }
+
     switch (code) {
       case "401":
         console.error("로그인이 만료되었습니다.");
@@ -55,6 +59,19 @@ axiosInstance.interceptors.response.use(
       case "500":
         console.log(message);
     }
+
+    switch (errorType) {
+      case "E300":
+        console.error("매장정보 등록 실패"); // 유효하지 않은 매장 등록 요청
+        break;
+      case "E301":
+        console.error("이미 존재하는 매장"); // 이미 존재하는 매장
+        break;
+      default:
+        console.error("기타 에러"); // 기타 에러
+        break;
+    }
+
     return Promise.reject(error);
   }
 );

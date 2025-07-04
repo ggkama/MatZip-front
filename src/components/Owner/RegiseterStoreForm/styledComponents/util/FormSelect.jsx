@@ -11,8 +11,8 @@ const FormSelect = ({ id, label, options, onChange, ...rest }) => (
     >
       <option value="">선택</option>
       {options.map((opt) => (
-        <option key={opt} value={opt}>
-          {opt}
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
         </option>
       ))}
     </select>
