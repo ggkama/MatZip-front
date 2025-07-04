@@ -1,10 +1,8 @@
 @import "tailwindcss";
-
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -93,7 +91,6 @@ audio,
 video {
   font-family: "Pretendard", sans-serif;
 }
-
 div,
 span,
 a,
@@ -112,14 +109,12 @@ td {
 .header-container {
   margin: 0 auto;
 }
-
 button {
   cursor: pointer;
   &:hover {
     opacity: 0.65;
   }
 }
-
 .react-datepicker__day--selected,
 .react-datepicker__day--keyboard-selected,
 .react-datepicker__day--in-selecting-range,
@@ -127,10 +122,10 @@ button {
   background-color: #f97316 !important; /* Tailwind의 orange-500 */
   color: white;
 }
-
 .react-datepicker__day--today {
   border: 1px solid #f97316; /* 오늘 날짜 테두리도 오렌지로 */
 }
+
 /* @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

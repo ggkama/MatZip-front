@@ -1,21 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import FormInput from "./styledComponents/util/FormInput";
-import FormSelect from "./styledComponents/util/FormSelect";
-import ConvenienceSelector from "./styledComponents/util/ConvenienceSelector";
-import DayCheckboxGroup from "./styledComponents/util/DayCheckboxGroup";
-import HolidayPicker from "./styledComponents/util/HolidayPicker";
-import ImageUploader from "./styledComponents/util/ImageUploader";
+import { useNavigate, useLocation } from "react-router-dom";
 import SubmitButton from "./styledComponents/util/SubmitButton";
-import convenienceOptions from "./styledComponents/js/convenienceOptions";
 import {
   formatPhoneNumber,
   isValidPhoneNumber,
 } from "./styledComponents/js/phone";
-import axios from "axios";
 
-const RegisterStoreForm = ({ initialData = null }) => {
-  const navigate = useNavigate();
+// 분리된 섹션 컴포넌트
+import StoreNameSection from "./styledComponents/parts/StoreNameSection";
+import AddressSection from "./styledComponents/parts/AddressSection";
+import FoodtypeSection from "./styledComponents/parts/FoodtypeSection";
+import ConvenienceSection from "./styledComponents/parts/ConvenienceSection";
+import PhoneSection from "./styledComponents/parts/PhoneSection";
+import TimeSection from "./styledComponents/parts/TimeSection";
+import HolidaySection from "./styledComponents/parts/HolidaySection";
+import MenuSection from "./styledComponents/parts/MenuSection";
+import CapacitySection from "./styledComponents/parts/CapacitySection";
+import ImageSection from "./styledComponents/parts/ImageSection";
+import RegionSection from "./styledComponents/parts/RegionSection";
+import axiosInstance from "../../../api/axiosInstance";
+
+const RegisterStoreForm = () => {
+  const navi = useNavigate();
+  const location = useLocation();
+  const initialData = location.state?.initialData || null;
   const isEdit = !!initialData;
 
   const [storeName, setStoreName] = useState(initialData?.storeName || "");
@@ -30,7 +38,9 @@ const RegisterStoreForm = ({ initialData = null }) => {
       ? initialData.categoryConvenience.map((s) => s.trim())
       : []
   );
-  const [storePhone, setStorePhone] = useState(initialData?.storePhone || "");
+  const [storePhone, setStorePhone] = useState(
+    initialData?.storePhone ? formatPhoneNumber(initialData.storePhone) : ""
+  );
   const [storeAddress1, setStoreAddress1] = useState(
     initialData?.storeAddress1 || ""
   );
@@ -52,8 +62,7 @@ const RegisterStoreForm = ({ initialData = null }) => {
   const [success, setSuccess] = useState(false);
   const [count, setCount] = useState(initialData?.count || "");
   const [imageList, setImageList] = useState(initialData?.imageList || []);
-
-  const dayOptions = ["월", "화", "수", "목", "금", "토", "일"];
+  const [changedImages, setChangedImages] = useState([]);
 
   useEffect(() => {
     const items =
@@ -113,8 +122,12 @@ const RegisterStoreForm = ({ initialData = null }) => {
     return true;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!validate()) return;
+
+    const filteredImageList = imageList.filter(
+      (path) => !deletedImagePaths.includes(path)
+    );
 
     const storeDto = {
       storeNo: initialData?.storeNo || null,
@@ -132,7 +145,7 @@ const RegisterStoreForm = ({ initialData = null }) => {
       startDate,
       endDate,
       count,
-      imageList, // 추가됨
+      imageList: filteredImageList,
     };
 
     const formData = new FormData();
@@ -140,48 +153,39 @@ const RegisterStoreForm = ({ initialData = null }) => {
       "storeDto",
       new Blob([JSON.stringify(storeDto)], { type: "application/json" })
     );
-    images.forEach((img) => formData.append("images", img));
-    deletedImagePaths.forEach((path) =>
-      formData.append("deletedImagePaths", path)
+    formData.append(
+      "deletedImagePaths",
+      new Blob([JSON.stringify(deletedImagePaths)], {
+        type: "application/json",
+      })
     );
+    changedImages.forEach(({ oldImage, newImage }) => {
+      formData.append("changedOldImages", oldImage);
+      formData.append("changedNewImages", newImage);
+    });
+    images.forEach((image) => {
+      if (image instanceof File && image.size > 0)
+        formData.append("images", image);
+    });
 
-    const rawTokens = sessionStorage.getItem("tokens");
-    const accessToken = rawTokens ? JSON.parse(rawTokens).accessToken : null;
+    const request = isEdit
+      ? axiosInstance.put("/api/owner/stores/update", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+      : axiosInstance.post("/api/owner/stores/write", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
 
-    try {
-      if (isEdit) {
-        await axios.put(
-          "http://localhost:8080/api/owner/stores/update",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        alert("수정이 완료되었습니다.");
-      } else {
-        await axios.post(
-          "http://localhost:8080/api/owner/stores/write",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        alert("등록이 완료되었습니다.");
-      }
-
-      setSuccess(true);
-      setError(null);
-      navigate("/owner-page", { replace: true });
-      window.location.reload();
-    } catch (err) {
-      setError("저장에 실패했습니다. 다시 시도해주세요.");
-    }
+    request
+      .then(() => {
+        setSuccess(true);
+        setError(null);
+        alert(isEdit ? "수정이 완료되었습니다." : "등록이 완료되었습니다.");
+        navi("/owner-page");
+      })
+      .catch(() => {
+        setError("저장에 실패했습니다. 다시 시도해주세요.");
+      });
   };
 
   return (
@@ -192,80 +196,45 @@ const RegisterStoreForm = ({ initialData = null }) => {
       <div className="space-y-4 flex flex-col w-[500px] mx-auto">
         <span className="text-sm text-gray-500">* 표시는 필수입니다.</span>
 
-        <FormInput label="매장명" value={storeName} onChange={setStoreName} />
-        <FormSelect
-          label="지역"
-          value={categoryAddress}
-          onChange={setCategoryAddress}
-          options={["서울특별시 강남구", "서울특별시 중구"]}
+        <StoreNameSection storeName={storeName} setStoreName={setStoreName} />
+        <RegionSection
+          categoryAddress={categoryAddress}
+          setCategoryAddress={setCategoryAddress}
         />
-        <FormSelect
-          label="음식 종류"
-          value={categoryFoodtype}
-          onChange={setCategoryFoodtype}
-          options={["한식", "양식", "중식", "일식"]}
+        <FoodtypeSection
+          categoryAddress={categoryAddress}
+          setCategoryAddress={setCategoryAddress}
+          categoryFoodtype={categoryFoodtype}
+          setCategoryFoodtype={setCategoryFoodtype}
         />
-        <ConvenienceSelector
-          options={convenienceOptions}
-          selected={categoryConvenience}
-          toggle={handleConvenienceToggle}
+        <ConvenienceSection
+          categoryConvenience={categoryConvenience}
+          handleToggle={handleConvenienceToggle}
         />
-        <FormInput
-          label="전화번호"
-          value={storePhone}
-          onChange={(e) => setStorePhone(formatPhoneNumber(e))}
-          placeholder="예: 010-1234-5678"
+        <PhoneSection storePhone={storePhone} setStorePhone={setStorePhone} />
+        <AddressSection
+          storeAddress1={storeAddress1}
+          setStoreAddress1={setStoreAddress1}
+          storeAddress2={storeAddress2}
+          setStoreAddress2={setStoreAddress2}
         />
-        <FormInput
-          label="주소"
-          value={storeAddress1}
-          onChange={setStoreAddress1}
+        <TimeSection
+          openTime={openTime}
+          setOpenTime={setOpenTime}
+          closeTime={closeTime}
+          setCloseTime={setCloseTime}
         />
-        <FormInput
-          label="상세 주소"
-          value={storeAddress2}
-          onChange={setStoreAddress2}
+        <HolidaySection
+          dayOff={dayOff}
+          handleDayToggle={handleDayToggle}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
         />
-        <FormInput
-          label="영업 시작 시간"
-          type="time"
-          value={openTime}
-          onChange={setOpenTime}
-        />
-        <FormInput
-          label="영업 종료 시간"
-          type="time"
-          value={closeTime}
-          onChange={setCloseTime}
-        />
-        <DayCheckboxGroup
-          options={dayOptions}
-          selected={dayOff}
-          toggle={handleDayToggle}
-        />
-        <div className="flex flex-col">
-          <label className="font-bold mb-2">임시휴무일 (선택)</label>
-          <HolidayPicker
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-          />
-        </div>
-        <FormInput
-          label="대표 메뉴"
-          value={menuName}
-          onChange={setMenuName}
-          placeholder="예: 김치찌개, 제육볶음, 된장찌개"
-        />
-        <FormInput
-          label="시간당 수용 인원 (명)"
-          type="number"
-          value={count}
-          onChange={(e) => setCount(Number(e))}
-          placeholder="예: 100"
-        />
-        <ImageUploader
+        <MenuSection menuName={menuName} setMenuName={setMenuName} />
+        <CapacitySection count={count} setCount={setCount} />
+        <ImageSection
           images={images}
           setImages={setImages}
           setError={setError}
@@ -275,14 +244,12 @@ const RegisterStoreForm = ({ initialData = null }) => {
             Array.isArray(initialData?.imageList) ? initialData.imageList : []
           }
         />
-
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {success && (
           <p className="text-green-600 text-sm">
             {isEdit ? "수정이 완료되었습니다." : "등록이 완료되었습니다."}
           </p>
         )}
-
         <SubmitButton onClick={handleSubmit} />
       </div>
     </div>
