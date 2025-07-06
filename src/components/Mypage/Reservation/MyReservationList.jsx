@@ -14,14 +14,26 @@ const MyReservationList = () => {
       return;
     }
 
+    // 예약 상태 업데이트 → 이후 목록 조회
     axiosInstance
-      .get(`/api/reservation/mypage/${loginUser.userNo}`)
+      .patch("/api/reservation/review/status-update")
+      .then(() => {
+        return axiosInstance.get(`/api/reservation/mypage/${loginUser.userNo}`);
+      })
       .then((res) => {
-        const list = res.data.map((r) => ({
-          ...r,
-          reservationStatus: r.reservationStatus || "예약완료",
-          reviewStatus: r.reviewStatus || "작성하기",
-        }));
+        const list = res.data.map((r) => {
+          let reviewStatus = "작성자격없음";
+          const isReview = r.isReview?.trim();
+
+          if (isReview === "YET") reviewStatus = "작성하기";
+          else if (isReview === "COM") reviewStatus = "작성완료";
+
+          return {
+            ...r,
+            reservationStatus: r.status === "N" ? "예약취소" : "예약완료",
+            reviewStatus,
+          };
+        });
         setReservations(list);
       })
       .catch((err) => {
@@ -44,9 +56,18 @@ const MyReservationList = () => {
     });
   };
 
+  const isPastReservation = (res) => {
+    if (!res.reservationDate || !res.reservationTime) return false;
+    const [datePart] = res.reservationDate.split("T");
+    const [y, m, d] = datePart.split("-");
+    const [h, min] = res.reservationTime.split(":");
+    const reservationDateTime = new Date(y, parseInt(m) - 1, d, h, min);
+    return reservationDateTime <= new Date();
+  };
+
   return (
     <div className="flex flex-col items-center pt-10 pb-20 px-4">
-      <h2 className="text-3xl font-bold mb-5">내 예약 내역</h2>
+      <h2 className="text-3xl font-bold mb-10">내 예약 내역</h2>
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
@@ -80,7 +101,7 @@ const MyReservationList = () => {
                           day: "2-digit",
                         })
                         .replace(/\. /g, "")
-                        .replace(".", "") //
+                        .replace(".", "")
                     : "-"}
                 </td>
                 <td
@@ -101,7 +122,7 @@ const MyReservationList = () => {
                   {res.reservationStatus}
                 </td>
                 <td>
-                  {res.reviewStatus === "작성자격없음" ? (
+                  {res.status === "N" || !isPastReservation(res) ? (
                     "-"
                   ) : res.reviewStatus === "작성하기" ? (
                     <button
@@ -113,7 +134,7 @@ const MyReservationList = () => {
                     >
                       작성하기
                     </button>
-                  ) : (
+                  ) : res.reviewStatus === "작성완료" ? (
                     <button
                       className="bg-orange-300 text-white text-xs px-3 py-1 rounded hover:bg-orange-400"
                       onClick={(e) => {
@@ -123,6 +144,8 @@ const MyReservationList = () => {
                     >
                       작성한 리뷰보기
                     </button>
+                  ) : (
+                    "-"
                   )}
                 </td>
               </tr>
