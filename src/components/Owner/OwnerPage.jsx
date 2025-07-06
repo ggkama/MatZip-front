@@ -23,6 +23,7 @@ const OwnerPage = () => {
   });
 
   useEffect(() => {
+    // 유저 프로필 불러오기
     apiService
       .get("/api/profile/form")
       .then((res) => {
@@ -38,6 +39,19 @@ const OwnerPage = () => {
       .catch((err) => {
         console.error("유저 정보 불러오기 실패", err);
         alert("유저 정보를 불러오는 데 실패했습니다.");
+      });
+
+    // ✅ storeNo 세션 저장 (공통 처리)
+    axiosInstance
+      .get("/api/owner/stores")
+      .then((res) => {
+        const storeData = res.data;
+        if (storeData?.storeNo) {
+          sessionStorage.setItem("storeNo", storeData.storeNo); // ✅ 저장
+        }
+      })
+      .catch((err) => {
+        console.error("storeNo 저장 실패", err);
       });
   }, []);
 

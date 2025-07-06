@@ -79,7 +79,7 @@ function App() {
           <Route path="/register-store" element={<RegisterStoreForm />} />
           <Route path="/store-reservation" element={<OwnerReservationList />} />
           <Route
-            path="/store-reservation-detail"
+            path="/store-reservation-detail/:reservationNo"
             element={<OwnerReservationDetail />}
           />
           <Route path="/store-review" element={<OwnerReviewList />} />
