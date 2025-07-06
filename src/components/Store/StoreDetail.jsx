@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { apiService } from "../../api/apiService";
 import convenienceOptions from "../Owner/RegiseterStoreForm/styledComponents/js/convenienceOptions";
-import BlogSection from "./NaverSearch/NaverSearch";
+import BlogSection from "./BlogSection/BlogSection";
+import StoreReviewList from "./StoreReviewList";
 
 const convenienceKeyToLabel = (key) => {
   const found = convenienceOptions.find((opt) => opt.key === key);
@@ -11,6 +12,7 @@ const convenienceKeyToLabel = (key) => {
 
 const StoreDetail = () => {
   const { storeNo } = useParams();
+  const navi = useNavigate();
   const [store, setStore] = useState(null);
 
   useEffect(() => {
@@ -21,6 +23,18 @@ const StoreDetail = () => {
         setStore(res.data);
       });
   }, [storeNo]);
+
+  
+  const handleReservationClick = () => {
+    const raw = sessionStorage.getItem("tokens")
+    if (!raw) {
+      
+      alert("로그인 후 예약할 수 있습니다.");
+      navi("/login"); 
+    } else {
+      navi(`/reservation/${storeNo}`);
+    }
+  };
 
   if (!store) {
     return <div className="text-center py-20">storedetail 조회실패</div>;
@@ -107,7 +121,7 @@ const StoreDetail = () => {
       {/* 방문자 리뷰 */}
       <div className="mb-8">
         <div className="font-semibold mb-2">방문자 리뷰</div>
-        {/* <StoreReviewList storeNo={store.storeNo} /> */}
+        {<StoreReviewList storeNo={store.storeNo} />}
       </div>
 
       <div className="mb-12">
@@ -117,7 +131,9 @@ const StoreDetail = () => {
 
       {/* 예약 버튼 */}
       <div className="flex justify-center mb-12">
-        <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-10 py-2 rounded-xl shadow">
+        <button 
+        onClick={handleReservationClick}
+        className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-10 py-2 rounded-xl shadow">
           예약하기
         </button>
       </div>

@@ -80,7 +80,7 @@ function App() {
           <Route path="/store-review" element={<OwnerReviewList />} />
           <Route path="/store-review-detail" element={<OwnerReviewDetail />} />
           {/* 예약하기 */}
-          <Route path="/reservaion-form" element={<ReservationForm />} />
+          <Route path="/reservation/:storeNo" element={<ReservationForm />} />
 
           {/* 관리자 페이지 */}
           <Route path="/admin" element={<Admin />} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./css/ReservationForm.css";
 import { useNavigate, useParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import axiosInstance from "../../api/axiosInstance";
 
 const ReservationForm = () => {
-  const navigate = useNavigate();
+  const navi = useNavigate();
   const { storeNo } = useParams();
 
   const [storeInfo, setStoreInfo] = useState({
@@ -29,14 +29,14 @@ const ReservationForm = () => {
   // 예약 조건 정보 불러오기
   useEffect(() => {
     const fetchReservationInfo = () => {
-      const url = `/api/reservation/${storeNo || 22}`;
+      const url = `/api/reservation/${storeNo}`;
 
       axiosInstance
         .get(url)
         .then((res) => {
           const data = res.data;
           setStoreInfo({
-            name: "",
+            storeName: data.storeName || "",
             openTime: parseInt(data.openTime),
             closeTime: parseInt(data.closeTime),
             dayOff: data.dayOff || [],
@@ -109,7 +109,7 @@ const ReservationForm = () => {
     <div className="flex flex-col items-center py-10">
       <h2 className="text-3xl font-bold mb-2">맛집 예약</h2>
       <p className="text-gray-600 mb-6">
-        {storeInfo.name || "가게명 불러오는 중..."}
+        {storeInfo.storeName || "가게명 불러오는 중..."}
       </p>
 
       <div className="flex gap-10 items-start">
