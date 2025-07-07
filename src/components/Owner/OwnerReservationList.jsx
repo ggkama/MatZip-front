@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
+import Pagination from "../../components/Pagenation/Pagenation"; // 위치 확인해서 경로 조정 필요
 
 const OwnerReservationList = () => {
   const navi = useNavigate();
   const [reservations, setReservations] = useState([]);
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const storeNo = sessionStorage.getItem("storeNo");
 
@@ -14,19 +18,18 @@ const OwnerReservationList = () => {
       return;
     }
 
-    console.log("storeNo 확인:", storeNo);
-
     axiosInstance
-      .get(`/api/reservation/owner/${storeNo}`)
+      .get(`/api/reservation/owner/${storeNo}?page=${currentPage}`)
       .then((res) => {
         console.log("가져온 예약 목록:", res.data);
-        setReservations(res.data);
+        setReservations(res.data.reservationList);
+        setTotalPages(res.data.totalPages);
       })
       .catch((err) => {
         console.error("예약 목록 조회 실패", err);
         alert("예약 목록을 불러오는 데 실패했습니다.");
       });
-  }, [storeNo]);
+  }, [storeNo, currentPage]);
 
   const handleCancel = (e, reservationNo) => {
     e.stopPropagation();
@@ -44,7 +47,6 @@ const OwnerReservationList = () => {
       })
       .then(() => {
         alert("예약이 취소되었습니다.");
-        // 목록 갱신
         setReservations((prev) =>
           prev.map((r) =>
             r.reservationNo === reservationNo ? { ...r, status: "N" } : r
@@ -74,29 +76,46 @@ const OwnerReservationList = () => {
           </tr>
         </thead>
         <tbody>
-          {reservations.map((res) => (
-            <tr
-              key={res.reservationNo}
-              className="hover:bg-gray-100 cursor-pointer border-b border-gray-300"
-              onClick={() =>
-                navi(`/store-reservation-detail/${res.reservationNo}`)
-              }
-            >
-              <td className="py-3">{res.reservationDate?.split("T")[0]}</td>
-              <td>{res.reservationTime}</td>
-              <td>{res.userName}</td>
-              <td>{res.personCount}</td>
-              <td>
-                {res.status === "Y" ? (
-                  <span className="text-green-600 font-semibold">예약완료</span>
-                ) : (
-                  <span className="text-red-500">예약취소</span>
-                )}
+          {reservations.length > 0 ? (
+            reservations.map((res) => (
+              <tr
+                key={res.reservationNo}
+                className="hover:bg-gray-100 cursor-pointer border-b border-gray-300"
+                onClick={() =>
+                  navi(`/store-reservation-detail/${res.reservationNo}`)
+                }
+              >
+                <td className="py-3">{res.reservationDate?.split("T")[0]}</td>
+                <td>{res.reservationTime}</td>
+                <td>{res.userName}</td>
+                <td>{res.personCount}</td>
+                <td>
+                  {res.status === "Y" ? (
+                    <span className="text-green-600 font-semibold">
+                      예약완료
+                    </span>
+                  ) : (
+                    <span className="text-red-500">예약취소</span>
+                  )}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" className="py-6 text-gray-400">
+                예약 내역이 없습니다.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
+
+      {/* 페이지네이션 컴포넌트 */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };
