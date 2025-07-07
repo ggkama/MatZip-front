@@ -1,28 +1,45 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { apiService } from "../../../api/apiService";
 
 const WriteReviewForm = () => {
-  const [grade, setGrade] = useState("");
-  const [content, setContent] = useState("");
-  const [images, setImages] = useState([]);
-  const [previewUrls, setPreviewUrls] = useState([]);
+  const location = useLocation();
   const navi = useNavigate();
-  const { state } = useLocation();
-  const { storeId, storeName, reservationNo, mode, review } = state || {};
+  const reviewData = location.state?.review;
+  const reservationNo =
+    reviewData?.reservationNo || location.state?.reservationNo || "";
+  const storeNo =
+    reviewData?.storeNo || location.state?.storeNo || "";
+  const storeName = reviewData?.storeName || location.state?.storeName || "";
+  const reviewDate = reviewData?.createDate || location.state?.reviewDate || "";
 
+  const [grade, setGrade] = useState(reviewData?.storeGrade || "");
+  const [content, setContent] = useState(reviewData?.reviewContent || "");
+  const [images, setImages] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState(
+    reviewData?.imageUrls
+      ? reviewData.imageUrls.map(
+          (url) =>
+            url.startsWith("http")
+              ? url
+              : `http://localhost:8080${url}`
+        )
+      : []
+  );
+
+  
   useEffect(() => {
-    // 수정모드라면 기존 내용 채워넣기
-    if (mode === "edit" && review) {
-      setGrade(review.storeGrade);
-      setContent(review.reviewContent);
-      if (review.imageUrls && review.imageUrls.length > 0) {
-        setPreviewUrls(review.imageUrls.map(url =>
-          url.startsWith("http") ? url : `http://localhost:8080${url}`
-        ));
-      }
+    if (reviewData?.imageUrls) {
+      setPreviewUrls(
+        reviewData.imageUrls.map(
+          (url) =>
+            url.startsWith("http")
+              ? url
+              : `http://localhost:8080${url}`
+        )
+      );
     }
-  }, [mode, review]);
+  }, [reviewData]);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -40,43 +57,62 @@ const WriteReviewForm = () => {
     setPreviewUrls((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!content.trim()) {
-      alert("내용을 입력해주세요.");
+
+    // 1. 필수값 체크
+    if (!reservationNo || !storeNo) {
+      alert("예약번호와 매장번호가 누락되었습니다.");
       return;
     }
     if (!grade) {
       alert("점수를 선택해주세요.");
       return;
     }
-    if (previewUrls.length === 0 && images.length === 0) {
-      alert("이미지를 1장 이상 업로드해주세요.");
+    if (!content.trim()) {
+      alert("리뷰 내용을 입력해주세요.");
       return;
     }
+    if (images.length === 0 && (!reviewData || !reviewData.imageUrls)) {
+      alert("이미지 한 장 이상은 필수입니다.");
+      return;
+    }
+
+    // 2. FormData 구성
     const formData = new FormData();
+    formData.append("reservationNo", reservationNo);
+    formData.append("storeNo", storeNo);
     formData.append("reviewContent", content);
     formData.append("storeGrade", grade);
-    formData.append("storeNo", storeId);
-    formData.append("reservationNo", reservationNo);
     images.forEach((img) => formData.append("files", img));
-    try {
-      if (mode === "edit" && review?.reviewNo) {
-        // 수정
-        await apiService.put(`/api/review/${review.reviewNo}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" }
+
+    // 3. 작성/수정 분기
+    if (reviewData?.reviewNo) {
+      // 수정
+      apiService
+        .put(`/api/review/${reviewData.reviewNo}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then(() => {
+          alert("리뷰 수정 완료");
+          navi("/my-review-list");
+        })
+        .catch((err) => {
+          alert("리뷰 수정 실패");
         });
-        alert("리뷰 수정 완료");
-      } else {
-        // 작성
-        await apiService.post("/api/review/write", formData, {
-          headers: { "Content-Type": "multipart/form-data" }
+    } else {
+      // 작성
+      apiService
+        .post("/api/review/write", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then(() => {
+          alert("리뷰 작성 완료");
+          navi("/my-review-list");
+        })
+        .catch((err) => {
+          alert("리뷰 작성 실패");
         });
-        alert("리뷰 작성 완료");
-      }
-      navi("/my-review-list");
-    } catch (err) {
-      alert("리뷰 작성/수정 실패");
     }
   };
 
@@ -86,10 +122,17 @@ const WriteReviewForm = () => {
       className="w-[500px] mx-auto pt-10 pb-20 space-y-6"
     >
       <h2 className="text-2xl font-bold text-center">
-        {mode === "edit" ? "리뷰 수정하기" : "리뷰 작성하기"}
+        {reviewData ? "리뷰 수정" : "리뷰 작성"}하기
       </h2>
       <p className="text-xl text-center">
-        {storeName && <span className="text-orange-600 font-extrabold">{storeName}</span>}
+        <strong className="text-orange-600 font-extrabold">
+          {reviewDate || "YYYY-MM-DD"}
+        </strong>
+        에 방문하셨던 <br />
+        <strong className="text-orange-600 font-extrabold">
+          {storeName || "매장명"}
+        </strong>
+        에 대해 평가를 남겨주세요.
       </p>
       <div className="space-y-2">
         <p className="font-medium">점수를 입력해주세요 *</p>
@@ -98,7 +141,7 @@ const WriteReviewForm = () => {
             <input
               type="radio"
               value={score}
-              checked={grade == score}
+              checked={String(grade) === String(score)}
               onChange={() => setGrade(score)}
               className="mr-2"
             />
@@ -154,9 +197,10 @@ const WriteReviewForm = () => {
         type="submit"
         className="w-full bg-orange-600 text-white py-3 rounded hover:bg-orange-700"
       >
-        {mode === "edit" ? "수정하기" : "작성하기"}
+        {reviewData ? "수정하기" : "작성하기"}
       </button>
     </form>
   );
 };
+
 export default WriteReviewForm;
