@@ -3,8 +3,8 @@ import { apiService } from "../../../api/apiService";
 
 const ChangePassword = () => {
   const [form, setForm] = useState({
-    userPw: "",
-    newUserPw: "",
+    currentPw: "",
+    newPw: "",
     confirmPw: "",
   });
 
@@ -14,9 +14,9 @@ const ChangePassword = () => {
   };
 
   const isValid = () => {
-    const { userPw, newUserPw, confirmPw } = form;
+    const { currentPw, newPw, confirmPw } = form;
 
-    if (!userPw || !newUserPw || !confirmPw) {
+    if (!currentPw || !newPw || !confirmPw) {
       alert("모든 항목을 입력해주세요.");
       return false;
     }
@@ -24,12 +24,12 @@ const ChangePassword = () => {
     const pattern =
       /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,30}$/;
 
-    if (!pattern.test(newUserPw)) {
+    if (!pattern.test(newPw)) {
       alert("비밀번호는 8자 이상이며 특수문자를 포함해야 합니다.");
       return false;
     }
 
-    if (newUserPw !== confirmPw) {
+    if (newPw !== confirmPw) {
       alert("새 비밀번호가 일치하지 않습니다.");
       return false;
     }
@@ -37,24 +37,26 @@ const ChangePassword = () => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!isValid()) return;
 
-    try {
-      const res = await apiService.put("/api/users/password", {
-        userPw: form.userPw,
-        newUserPw: form.newUserPw,
+    apiService
+      .put("/api/profile/password", {
+        currentPw: form.currentPw,
+        newPw: form.newPw,
+      })
+      .then(() => {
+        alert("비밀번호 변경이 완료되었습니다.");
+      })
+      .catch((err) => {
+        const errorType = err.response?.data?.errorType;
+        if (errorType === "E119") {
+          alert("현재 비밀번호가 일치하지 않습니다.");
+        } else {
+          alert("요청 실패");
+        }
       });
-
-      if (res.data.code === "A200") {
-        alert("비밀번호가 변경되었습니다.");
-      } else {
-        alert(res.data.message || "변경 실패");
-      }
-    } catch (err) {
-      alert("요청 실패");
-    }
   };
 
   return (
@@ -62,15 +64,15 @@ const ChangePassword = () => {
       <h2 className="text-3xl font-bold mb-6">비밀번호 변경</h2>
       <form onSubmit={handleSubmit} className="w-[500px] space-y-4">
         <InputField
-          label="비밀번호"
-          name="userPw"
-          value={form.userPw}
+          label="현재 비밀번호"
+          name="currentPw"
+          value={form.currentPw}
           onChange={handleChange}
         />
         <InputField
           label="새 비밀번호"
-          name="newUserPw"
-          value={form.newUserPw}
+          name="newPw"
+          value={form.newPw}
           onChange={handleChange}
         />
         <InputField

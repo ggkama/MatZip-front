@@ -10,7 +10,7 @@ const NoticeWriteForm = () => {
 
   const [form, setForm] = useState({
     noticeTitle: "",
-    noticeContent: ""
+    noticeContent: "",
   });
 
   const handleChange = (e) => {
@@ -24,13 +24,10 @@ const NoticeWriteForm = () => {
       return;
     }
 
-    const url = mode === "edit"
-      ? `/api/notice/${noticeNo}`
-      : `/api/notice/write`;
+    const url =
+      mode === "edit" ? `/api/notice/${noticeNo}` : `/api/notice/write`;
 
-    const method = mode === "edit"
-      ? apiService.put
-      : apiService.post;
+    const method = mode === "edit" ? apiService.put : apiService.post;
 
     method(url, form)
       .then(() => {

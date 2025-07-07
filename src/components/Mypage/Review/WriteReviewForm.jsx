@@ -6,12 +6,11 @@ const WriteReviewForm = () => {
   const location = useLocation();
   const navi = useNavigate();
   const reviewData = location.state?.review;
-  const reservationNo =
-    reviewData?.reservationNo || location.state?.reservationNo || "";
-  const storeNo =
-    reviewData?.storeNo || location.state?.storeNo || "";
-  const storeName = reviewData?.storeName || location.state?.storeName || "";
-  const reviewDate = reviewData?.createDate || location.state?.reviewDate || "";
+  const reservationData = location.state?.reservation;
+  const reservationNo = reservationData?.reservationNo || "";
+  const storeNo = reservationData?.storeNo || "";
+  const storeName = reservationData?.storeName || "";
+  const reviewDate = reservationData?.reservationDate || "";
 
   const [grade, setGrade] = useState(reviewData?.storeGrade || "");
   const [content, setContent] = useState(reviewData?.reviewContent || "");
@@ -78,7 +77,7 @@ const WriteReviewForm = () => {
       return;
     }
 
-    // 2. FormData 구성
+    // FormData 구성
     const formData = new FormData();
     formData.append("reservationNo", reservationNo);
     formData.append("storeNo", storeNo);
@@ -86,7 +85,7 @@ const WriteReviewForm = () => {
     formData.append("storeGrade", grade);
     images.forEach((img) => formData.append("files", img));
 
-    // 3. 작성/수정 분기
+    // 작성/수정
     if (reviewData?.reviewNo) {
       // 수정
       apiService
