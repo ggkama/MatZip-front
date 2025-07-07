@@ -38,6 +38,8 @@ import NoticeDetail from "./components/Notice/NoticeDetail";
 import NoticeWriteForm from "./components/Notice/NoticeWriteForm";
 import StoreDetail from "./components/Store/StoreDetail";
 import StoreList from "./components/Store/StoreList";
+import KakaoLogin from "./components/Member/Kakao/KakaoLogin";
+import KakaoSignup from "./components/Member/Kakao/KakaoSignup";
 
 function App() {
   return (
@@ -49,6 +51,8 @@ function App() {
           <Route path="/test" element={<Test />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/login/result" element={<KakaoLogin />} />
+          <Route path="/signup/kakao" element={<KakaoSignup />} />
           {/* 마이페이지 */}
           <Route path="/my-page" element={<Mypage />} />
           <Route path="/my-password" element={<PasswordInput />} />

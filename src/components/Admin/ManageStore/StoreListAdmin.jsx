@@ -13,8 +13,10 @@ const StoreListAdmin = () => {
   useEffect(() => {
     const storeList = () => {
       axiosInstance
-        .get(`/api/admin/manage/storeList?page=${currentPage}`)
+        .get(`/api/admin/manage/stores?page=${currentPage}`)
         .then((response) => {
+          console.log(response);
+
           setStores(response.data.storeList);
           setTotalPages(response.data.totalPages);
         })
@@ -58,7 +60,7 @@ const StoreListAdmin = () => {
                 <td className="py-3">{store.storeName}</td>
                 <td className="py-3">{store.categoryAddress}</td>
                 <td className="py-3">⭐ {store.storeGrade}</td>
-                <td className="py-3">{store.createDate.split("T")[0]}</td>
+                <td className="py-3">{store.createDate?.split("T")[0]}</td>
               </tr>
             ))}
           </tbody>
