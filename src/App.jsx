@@ -68,6 +68,7 @@ function App() {
           <Route path="/my-review-list" element={<MyReviewsList />} />
           <Route path="/my-review-detail" element={<MyReviewsDetail />} />
           <Route path="/my-register-owner" element={<RegisterOwner />} />
+          <Route path="/password" element={<PasswordInput />} />
           {/* 공지사항 */}
           <Route path="/notice" element={<NoticeList />} />
           <Route path="/notice-detail" element={<NoticeDetail />} />
@@ -78,13 +79,13 @@ function App() {
           <Route path="/register-store" element={<RegisterStoreForm />} />
           <Route path="/store-reservation" element={<OwnerReservationList />} />
           <Route
-            path="/store-reservation-detail"
+            path="/store-reservation-detail/:reservationNo"
             element={<OwnerReservationDetail />}
           />
           <Route path="/store-review" element={<OwnerReviewList />} />
           <Route path="/store-review-detail" element={<OwnerReviewDetail />} />
           {/* 예약하기 */}
-          <Route path="/reservaion-form" element={<ReservationForm />} />
+          <Route path="/reservation/:storeNo" element={<ReservationForm />} />
 
           {/* 관리자 페이지 */}
           <Route path="/admin" element={<Admin />} />

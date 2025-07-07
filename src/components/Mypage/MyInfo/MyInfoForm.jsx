@@ -1,21 +1,48 @@
 import React, { useState, useEffect } from "react";
 import { apiService } from "../../../api/apiService";
+import { IoCamera } from "react-icons/io5";
+
+const API_URL = window.ENV?.API_URL || import.meta.env.VITE_API_URL;
 
 const MyInfo = () => {
   const [userInfo, setUserInfo] = useState({
-    userId: "user0101",
-    userName: "홍길동",
-    userNickname: "길동이",
-    userPhone: "010-1234-5678",
+    userId: "",
+    userName: "",
+    userNickname: "",
+    userPhone: "",
     profileImage: null,
   });
+
   const [previewUrl, setPreviewUrl] = useState(null);
 
   useEffect(() => {
+    let previewToRevoke = null;
+
+    apiService
+      .get("/api/profile/form")
+      .then((res) => {
+        const data = res.data;
+        setUserInfo({
+          ...data,
+          profileImage: null,
+        });
+
+        if (data.profileImage) {
+          const fullUrl = `${API_URL}${data.profileImage}`;
+          setPreviewUrl(fullUrl);
+        }
+      })
+      .catch((err) => {
+        console.error("내 정보 불러오기 실패", err);
+        alert("내 정보를 불러오는 데 실패했습니다.");
+      });
+
     return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      if (previewToRevoke) {
+        URL.revokeObjectURL(previewToRevoke);
+      }
     };
-  }, [previewUrl]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +66,8 @@ const MyInfo = () => {
       return;
     }
 
-    setPreviewUrl(URL.createObjectURL(file));
+    const tempUrl = URL.createObjectURL(file);
+    setPreviewUrl(tempUrl);
     setUserInfo((prev) => ({ ...prev, profileImage: file }));
   };
 
@@ -51,31 +79,38 @@ const MyInfo = () => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+
     if (!isValid()) {
       alert("입력값을 다시 확인해주세요.");
       return;
     }
 
     const formData = new FormData();
-    Object.entries(userInfo).forEach(([key, val]) => {
-      if (val) formData.append(key, val);
-    });
+    formData.append("userName", userInfo.userName);
+    formData.append("userNickname", userInfo.userNickname);
+    formData.append("userPhone", userInfo.userPhone);
 
-    try {
-      const res = await apiService.put("/api/user/update", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      if (res.data.code === "A200") {
-        alert("정보 수정 완료");
-      } else {
-        alert(res.data.message || "수정 실패");
-      }
-    } catch (err) {
-      alert("요청 실패");
+    if (userInfo.profileImage) {
+      formData.append("profileImage", userInfo.profileImage);
     }
+
+    apiService
+      .put("/api/profile/update", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => {
+        if (res.data.success) {
+          alert("정보 수정 완료");
+        } else {
+          alert(res.data.message || "수정 실패");
+        }
+      })
+      .catch((err) => {
+        console.error("요청 실패", err);
+        alert("요청 실패");
+      });
   };
 
   return (
@@ -84,16 +119,22 @@ const MyInfo = () => {
 
       <form onSubmit={handleSubmit} className="w-[500px] space-y-5">
         <div className="flex flex-col items-center">
-          <label htmlFor="profile-upload" className="cursor-pointer">
+          <label
+            htmlFor="profile-upload"
+            className="cursor-pointer relative w-30 h-30"
+          >
             {previewUrl ? (
               <img
                 src={previewUrl}
                 alt="프로필"
-                className="w-24 h-24 rounded-full object-cover mb-2"
+                className="w-30 h-30 rounded-full object-cover mb-2"
               />
             ) : (
-              <div className="w-24 h-24 bg-gray-200 rounded-full mb-2" />
+              <div className="w-30 h-30 bg-gray-200 rounded-full mb-2" />
             )}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <IoCamera size={28} className="text-white opacity-80" />
+            </div>
           </label>
           <input
             type="file"
@@ -102,7 +143,7 @@ const MyInfo = () => {
             onChange={handleFileChange}
             className="hidden"
           />
-          <p className="text-sm text-gray-500">{userInfo.userId}</p>
+          <p className="text-lg font-bold mt-5">{userInfo.userId}</p>
         </div>
 
         <InputField

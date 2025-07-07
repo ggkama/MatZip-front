@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { apiService } from "../../../api/apiService";
+import { useNavigate } from "react-router-dom";
 
 const AccountDelete = () => {
   const [userPw, setUserPw] = useState("");
+  const navigate = useNavigate();
 
-  const handleDelete = async (e) => {
+  const handleDelete = (e) => {
     e.preventDefault();
 
     if (!userPw) {
@@ -12,18 +14,28 @@ const AccountDelete = () => {
       return;
     }
 
-    try {
-      const res = await apiService.delete("/api/users", { userPw });
-
-      if (res.data.code === "A200") {
-        alert("회원탈퇴가 완료되었습니다.");
-        // localStorage.clear(); navigate("/login");
-      } else {
-        alert(res.data.message || "회원탈퇴에 실패했습니다.");
-      }
-    } catch (err) {
-      alert("요청 실패");
-    }
+    apiService
+      .put("/api/profile/delete", { userPw })
+      .then((res) => {
+        if (
+          res.data.code === "A200" ||
+          res.data === "회원 탈퇴가 완료되었습니다."
+        ) {
+          alert("회원탈퇴가 완료되었습니다.");
+          sessionStorage.clear(); // 로그아웃 처리
+          navigate("/"); // 메인 페이지로 이동
+        } else {
+          alert(res.data.message || "회원탈퇴에 실패했습니다.");
+        }
+      })
+      .catch((err) => {
+        const errorType = err.response?.data?.errorType;
+        if (errorType === "E119") {
+          alert("비밀번호가 일치하지 않습니다.");
+        } else {
+          alert("요청 실패");
+        }
+      });
   };
 
   return (
@@ -38,6 +50,7 @@ const AccountDelete = () => {
             value={userPw}
             onChange={(e) => setUserPw(e.target.value)}
             className="border border-orange-400 rounded px-3 py-2 focus:outline-none"
+            required
           />
         </div>
 

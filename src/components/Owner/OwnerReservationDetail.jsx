@@ -1,19 +1,26 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 const OwnerReservationDetail = () => {
   const navi = useNavigate();
+  const { reservationNo } = useParams();
 
-  const reservation = {
-    userName: "홍길동",
-    userPhone: "02-1234-1234",
-    reservationDate: "2025.06.18",
-    reservationTime: "18:00",
-    peopleCount: 3,
-  };
-
+  const [reservation, setReservation] = useState(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [customReason, setCustomReason] = useState("");
+
+  useEffect(() => {
+    axiosInstance
+      .get(`/api/reservation/owner/detail/${reservationNo}`)
+      .then((res) => {
+        setReservation(res.data);
+      })
+      .catch((err) => {
+        console.error("예약 상세 조회 실패", err);
+        alert("예약 정보를 불러오는 데 실패했습니다.");
+      });
+  }, [reservationNo]);
 
   const handleCancelConfirm = () => {
     if (!customReason.trim()) {
@@ -21,29 +28,64 @@ const OwnerReservationDetail = () => {
       return;
     }
 
-    // TODO: API 호출
-    console.log("취소 사유:", customReason);
-    setShowCancelModal(false);
-    alert("예약이 취소되었습니다.");
+    axiosInstance
+      .patch("/api/reservation/owner/cancel", {
+        reservationNo,
+        cancelReason: customReason.trim(),
+      })
+      .then(() => {
+        alert("예약이 취소되었습니다.");
+        setReservation((prev) => ({ ...prev, status: "N" }));
+        setShowCancelModal(false);
+      })
+      .catch((err) => {
+        console.error("예약 취소 실패", err);
+        alert("예약 취소에 실패했습니다.");
+      });
   };
+
+  if (!reservation)
+    return <p className="text-center mt-10">예약 정보 불러오는 중...</p>;
 
   return (
     <div className="flex flex-col items-center pt-10 pb-20 px-4">
-      <h2 className="text-3xl font-bold mb-10">내 가게 예약 내역</h2>
+      <h2 className="text-3xl font-bold mb-10">내 가게 예약 상세</h2>
 
-      <div className="space-y-3 text-sm w-[300px] mx-auto">
+      <div className="bg-white shadow-md rounded-lg w-full max-w-md p-6 space-y-4 border border-gray-200">
         <InfoRow label="예약자명" value={reservation.userName} />
+        <Divider />
         <InfoRow label="핸드폰번호" value={reservation.userPhone} />
-        <InfoRow label="예약 일시" value={reservation.reservationDate} />
+        <Divider />
+        <InfoRow
+          label="예약 일자"
+          value={reservation.reservationDate?.split("T")[0]}
+        />
+        <Divider />
         <InfoRow label="예약 시간" value={reservation.reservationTime} />
-        <InfoRow label="인원수" value={reservation.peopleCount} />
+        <Divider />
+        <InfoRow label="인원수" value={`${reservation.personCount}명`} />
+        <Divider />
+        <InfoRow
+          label="예약상태"
+          value={
+            reservation.status === "Y" ? (
+              <span className="text-green-600 font-semibold">예약완료</span>
+            ) : (
+              <span className="text-red-500 font-semibold">예약취소</span>
+            )
+          }
+        />
 
-        <button
-          onClick={() => setShowCancelModal(true)}
-          className="mt-4 bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600"
-        >
-          예약취소
-        </button>
+        {reservation.status === "Y" &&
+          new Date(reservation.reservationDate) >=
+            new Date().setHours(0, 0, 0, 0) && (
+            <button
+              onClick={() => setShowCancelModal(true)}
+              className="w-full mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+              예약취소
+            </button>
+          )}
       </div>
 
       <button
@@ -93,10 +135,12 @@ const OwnerReservationDetail = () => {
 };
 
 const InfoRow = ({ label, value }) => (
-  <div className="flex text-sm">
-    <div className="w-30 font-medium mr-3">{label}</div>
-    <div>{value}</div>
+  <div className="flex justify-between items-center">
+    <span className="font-medium text-gray-600">{label}</span>
+    <span>{value}</span>
   </div>
 );
+
+const Divider = () => <hr className="border-t border-gray-200 my-1" />;
 
 export default OwnerReservationDetail;

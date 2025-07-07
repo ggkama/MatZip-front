@@ -39,7 +39,7 @@ const MyReservationDetail = () => {
     const reason = cancelReason === "기타" ? customReason : cancelReason;
 
     apiService
-      .patch("/api/reservation/cancel", {
+      .patch("/api/reservation/mypage/cancel", {
         reservationNo,
         cancelReason: reason,
       })
@@ -61,6 +61,28 @@ const MyReservationDetail = () => {
     <div className="flex flex-col items-center pt-10 pb-20 px-4">
       <h2 className="text-3xl font-bold mb-10">내 예약 내역</h2>
 
+      {reservation.status === "N" && (
+        <div className="w-full flex justify-center">
+          <div className="w-full max-w-[720px] bg-red-100 border border-red-300 text-red-700 px-6 py-4 mb-10 rounded-lg flex items-center gap-3">
+            <svg
+              className="w-6 h-6 text-red-500 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M18.364 5.636L5.636 18.364M5.636 5.636l12.728 12.728"
+              />
+            </svg>
+            <p className="text-lg font-semibold">
+              이 예약은 취소된 상태입니다.
+            </p>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col md:flex-row gap-10 max-w-4xl w-full justify-center items-start">
         <div className="w-[300px] h-[300px] bg-gray-300 shrink-0">
           {reservation.storeImage ? (
@@ -87,12 +109,14 @@ const MyReservationDetail = () => {
           <InfoRow label="예약 시간" value={reservation.reservationTime} />
           <InfoRow label="인원수" value={`${reservation.personCount}명`} />
 
-          <button
-            onClick={() => setShowCancelModal(true)}
-            className="mt-4 bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600 cursor-pointer"
-          >
-            예약취소
-          </button>
+          {reservation.status !== "N" && (
+            <button
+              onClick={() => setShowCancelModal(true)}
+              className="mt-4 bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600 cursor-pointer"
+            >
+              예약취소
+            </button>
+          )}
         </div>
       </div>
 
@@ -119,8 +143,8 @@ const MyReservationDetail = () => {
 
 const InfoRow = ({ label, value }) => (
   <div className="flex text-sm">
-    <div className="w-30 font-medium mr-3">{label}</div>
-    <div>{value}</div>
+    <div className="w-30 font-bold mr-3">{label}</div>
+    <div className="text-gray-600">{value}</div>
   </div>
 );
 

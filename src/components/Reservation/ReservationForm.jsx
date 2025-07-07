@@ -12,9 +12,7 @@ import {
 import { dateUtils } from "./styleComponents/js/dateUtils";
 
 const ReservationForm = () => {
-  const navigate = useNavigate();
-  const { storeNo: paramStoreNo } = useParams();
-  const storeNo = paramStoreNo || "81";
+  const navi = useNavigate();
   const [storeInfo, setStoreInfo] = useState({
     name: "",
     openTime: "",
@@ -23,7 +21,7 @@ const ReservationForm = () => {
     startDate: null,
     endDate: null,
   });
-
+  const { storeNo } = useParams();
   const [reservationDate, setReservationDate] = useState(new Date());
   const [reservationTime, setReservationTime] = useState("");
   const [personCount, setPersonCount] = useState(1);
@@ -34,7 +32,7 @@ const ReservationForm = () => {
 
   useEffect(() => {
     const fetchReservationInfo = () => {
-      const url = `/api/reservation/store/${storeNo || 81}`;
+      const url = `/api/reservation/store/${storeNo}`;
       axiosInstance
         .get(url)
         .then((res) => {
