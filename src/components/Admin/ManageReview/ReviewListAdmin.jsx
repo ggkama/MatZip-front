@@ -13,7 +13,7 @@ const ReviewListAdmin = () => {
   useEffect(() => {
     const reviewList = () => {
       axiosInstance
-        .get(`/api/admin/manage/reviewList?page=${currentPage}`)
+        .get(`/api/admin/manage/reviews?page=${currentPage}`)
         .then((response) => {
           setReviews(response.data.reviewList);
           setTotalPages(response.data.totalPages);
@@ -21,7 +21,7 @@ const ReviewListAdmin = () => {
         })
         .catch((error) => {
           console.log(error);
-          alert("가게 리스트 조회에 실패했습니다.");
+          alert("리뷰 리스트 조회에 실패했습니다.");
         });
     };
     reviewList();
@@ -57,7 +57,7 @@ const ReviewListAdmin = () => {
                 onClick={() => navi(`/admin/review/${review.reviewNo}`)}
               >
                 <td className="py-3">{review.storeName}</td>
-                <td className="py-3">{review.userNickName}</td>
+                <td className="py-3">{review.userNickname}</td>
                 <td className="py-3">⭐ {review.storeGrade}</td>
                 <td className="py-3">{review.reviewDate.split("T")[0]}</td>
               </tr>

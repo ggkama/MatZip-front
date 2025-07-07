@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
+import KakaoLoginButton from "./Kakao/KakaoLoginButton";
 
 const Login = () => {
   const navi = useNavigate();
@@ -87,6 +88,7 @@ const Login = () => {
         >
           로그인
         </button>
+        <KakaoLoginButton />
       </form>
     </div>
   );

@@ -23,26 +23,20 @@ const Header = () => {
   }, [location.pathname]);
 
   const handleLogout = () => {
-    axiosInstance
-      .post("/api/auth/logout")
-      .then((response) => {
-        if (response.data.code === "S204") {
-          sessionStorage.removeItem("user");
-          sessionStorage.removeItem("tokens");
-
-          setIsLoggedIn(false);
-          setRole("");
-          navigate("/");
-          alert(response.data.message);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("tokens");
+    setIsLoggedIn(false);
+    setRole("");
+    navigate("/");
   };
 
   // ROLE에 따른 마이페이지 경로 설정
-  const myPagePath = role === "ROLE_OWNER" ? "/owner-page" : "/my-page";
+  let myPagePath = "/my-page";
+  if (role === "ROLE_OWNER") {
+    myPagePath = "/owner-page";
+  } else if (role === "ROLE_ADMIN") {
+    myPagePath = "/admin";
+  }
 
   return (
     <header className="border-b border-gray-200 bg-white">
