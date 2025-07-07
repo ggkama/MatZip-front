@@ -60,6 +60,8 @@ axiosInstance.interceptors.response.use(
         console.log(message);
     }
 
+    const errorType = res?.data?.code;
+
     switch (errorType) {
       case "E300":
         console.error("매장정보 등록 실패"); // 유효하지 않은 매장 등록 요청
