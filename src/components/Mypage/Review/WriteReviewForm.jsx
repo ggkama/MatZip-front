@@ -2,15 +2,43 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { apiService } from "../../../api/apiService";
 
+// 날짜 포맷 가공 함수
+function formatVisitDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (isNaN(date)) return dateString;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 const WriteReviewForm = () => {
   const location = useLocation();
   const navi = useNavigate();
+
   const reviewData = location.state?.review;
   const reservationData = location.state?.reservation;
-  const reservationNo = reservationData?.reservationNo || "";
-  const storeNo = reservationData?.storeNo || "";
-  const storeName = reservationData?.storeName || "";
-  const reviewDate = reservationData?.reservationDate || "";
+
+  const reservationNo =
+    reservationData?.reservationNo ||
+    reviewData?.reservationNo ||
+    "";
+
+  const storeNo =
+    reservationData?.storeNo ||
+    reviewData?.storeNo ||
+    "";
+
+  const storeName =
+    reservationData?.storeName ||
+    reviewData?.storeName ||
+    "";
+
+  const reviewDate =
+    reservationData?.reservationDate ||
+    reviewData?.createDate ||
+    "";
 
   const [grade, setGrade] = useState(reviewData?.storeGrade || "");
   const [content, setContent] = useState(reviewData?.reviewContent || "");
@@ -26,7 +54,6 @@ const WriteReviewForm = () => {
       : []
   );
 
-  
   useEffect(() => {
     if (reviewData?.imageUrls) {
       setPreviewUrls(
@@ -79,10 +106,10 @@ const WriteReviewForm = () => {
 
     // FormData 구성
     const formData = new FormData();
-    formData.append("reservationNo", reservationNo);
-    formData.append("storeNo", storeNo);
+    formData.append("reservationNo", Number(reservationNo));
+    formData.append("storeNo", Number(storeNo));
     formData.append("reviewContent", content);
-    formData.append("storeGrade", grade);
+    formData.append("storeGrade", Number(grade));
     images.forEach((img) => formData.append("files", img));
 
     // 작성/수정
@@ -125,7 +152,7 @@ const WriteReviewForm = () => {
       </h2>
       <p className="text-xl text-center">
         <strong className="text-orange-600 font-extrabold">
-          {reviewDate || "YYYY-MM-DD"}
+          {formatVisitDate(reviewDate) || "YYYY-MM-DD"}
         </strong>
         에 방문하셨던 <br />
         <strong className="text-orange-600 font-extrabold">

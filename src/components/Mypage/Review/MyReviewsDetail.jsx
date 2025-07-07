@@ -39,14 +39,21 @@ const MyReviewsDetail = () => {
     }
   };
 
-  // 수정
-  const handleEdit = (review) => {
-    navi("/review-form", { state: { review, isEdit: true } });
+    // 수정
+    const handleEdit = (review) => {
+    navi("/review-form", {
+      state: {
+        review,
+        reservation: {
+          reservationNo: review.reservationNo,
+          storeNo: review.storeNo,
+          storeName: review.storeName,
+          reservationDate: review.createDate,
+        },
+        isEdit: true,
+      },
+    });
   };
-
-  if (!reviews.length) {
-    return <div className="text-center mt-10">작성한 리뷰가 없습니다.</div>;
-  }
 
   return (
     <div className="py-12 max-w-4xl mx-auto">
