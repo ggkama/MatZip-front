@@ -22,3 +22,5 @@ node_modules/*
 application-private.yml
 
 .vscode/*
+
+conf.js
