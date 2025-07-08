@@ -21,6 +21,7 @@ const MyInfo = () => {
     apiService
       .get("/api/profile/form")
       .then((res) => {
+        console.log("🟢 프로필 응답:", res);
         const data = res.data;
         setUserInfo({
           ...data,
@@ -28,7 +29,7 @@ const MyInfo = () => {
         });
 
         if (data.profileImage) {
-          const fullUrl = `${API_URL}${data.profileImage}`;
+          const fullUrl = `${data.profileImage}`;
           setPreviewUrl(fullUrl);
         }
       })
