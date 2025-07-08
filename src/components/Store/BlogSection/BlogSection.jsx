@@ -7,9 +7,9 @@ function BlogSection({ storeName }) {
   useEffect(() => {
     if (!storeName) return;
     axios
-      .get(`/api/store/${encodeURIComponent(storeName)}/naver-blog`)
+      .get(`/api/store/${(storeName)}/naver-blog`)
       .then((res) => {
-        const items = JSON.parse(res.data).items;
+        const items = res.data.items || [];
         setBlogs(items);
       })
       .catch(() => setBlogs([]));
@@ -22,7 +22,7 @@ function BlogSection({ storeName }) {
       {blogs.map((blog, idx) => (
         <div key={idx} className="mb-4">
           <a href={blog.link} target="_blank" rel="noopener noreferrer">
-            <strong>{blog.title.replace(/<[^>]*>/g, "")}</strong>
+            <strong>{blog.title.replace(/<[^>]*>/g, "")}</strong>ㄱ
           </a>
           <p>{blog.description.replace(/<[^>]*>/g, "")}</p>
         </div>
