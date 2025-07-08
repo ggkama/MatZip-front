@@ -90,7 +90,7 @@ const OwnerDetail = () => {
             placeholder="닉네임"
           />
           <img
-            src={`http://localhost:8080${user.image}`}
+            src={`${user.image}`}
             alt="사장님 등록 이미지"
             className="w-full h-auto border border-orange-300 rounded"
           />

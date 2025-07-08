@@ -83,6 +83,23 @@ const MyReservationDetail = () => {
           </div>
         </div>
       )}
+<<<<<<< HEAD
+=======
+      <div className="flex flex-col md:flex-row gap-10 max-w-4xl w-full justify-center items-start">
+        <div className="w-[300px] h-[300px] bg-gray-300 shrink-0">
+          {reservation.storeImage ? (
+            <img
+              src={`${reservation.storeImage}`}
+              alt="가게 이미지"
+              className="w-full h-full object-cover rounded"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-300 flex items-center justify-center text-sm text-gray-500">
+              이미지 없음
+            </div>
+          )}
+        </div>
+>>>>>>> efaf29fbc70b01a862e86fa33b2dac6e2243561c
 
       <div className="w-full max-w-xl bg-white shadow-md rounded-lg overflow-hidden">
         {reservation.storeImage ? (
