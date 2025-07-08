@@ -87,7 +87,7 @@ const MyReservationDetail = () => {
         <div className="w-[300px] h-[300px] bg-gray-300 shrink-0">
           {reservation.storeImage ? (
             <img
-              src={`http://localhost:8080${reservation.storeImage}`}
+              src={`${reservation.storeImage}`}
               alt="가게 이미지"
               className="w-full h-full object-cover rounded"
             />
