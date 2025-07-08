@@ -92,12 +92,7 @@ const Header = () => {
           >
             HOME
           </li>
-          <li
-            className="hover:underline cursor-pointer"
-            onClick={() => navigate("/stores")}
-          >
-            맛집
-          </li>
+          
           <li
             className="hover:underline cursor-pointer"
             onClick={() => navigate("/notice")}
