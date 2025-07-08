@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiService } from "../../api/apiService"; 
+import { apiService } from "../../api/apiService";
 
 const PAGE_SIZE = 5;
 
@@ -18,11 +18,11 @@ const StoreList = () => {
         params: {
           page: currentPage - 1,
           size: PAGE_SIZE,
-          search: search.trim()
-        }
+          search: search.trim(),
+        },
       })
       .then((res) => {
-        console.log("받아온 매장 데이터 전체:", res.data); 
+        console.log("받아온 매장 데이터 전체:", res.data);
         setStores(res.data.content ?? []);
         setTotalPages(res.data.totalPages ?? 1);
       })
@@ -55,7 +55,9 @@ const StoreList = () => {
             </div>
             {/* 카테고리/음식 */}
             <div className="flex items-center mb-2 text-sm gap-3">
-              <span className="font-semibold text-[#F2994A]">[{store.categoryAddress}]</span>
+              <span className="font-semibold text-[#F2994A]">
+                [{store.categoryAddress}]
+              </span>
               <span className="text-gray-700">{store.categoryFoodtype}</span>
             </div>
             {/* 이미지 3칸 고정 */}
@@ -67,7 +69,7 @@ const StoreList = () => {
                 >
                   {store.imageList && store.imageList[i] ? (
                     <img
-                      src={`http://localhost:8080${store.imageList[i]}`}
+                      src={`${store.imageList[i]}`}
                       alt={`가게사진${i + 1}`}
                       className="w-full h-full object-cover rounded"
                       onError={(e) => (e.target.style.display = "none")}
@@ -99,7 +101,11 @@ const StoreList = () => {
               key={i}
               onClick={() => setCurrentPage(i + 1)}
               className={`w-7 h-7 rounded-full border-2 border-orange-300 flex items-center justify-center text-sm
-                ${currentPage === i + 1 ? "bg-orange-400 text-white border-orange-400" : "bg-white text-orange-500"}
+                ${
+                  currentPage === i + 1
+                    ? "bg-orange-400 text-white border-orange-400"
+                    : "bg-white text-orange-500"
+                }
               `}
             >
               {i + 1}
@@ -114,8 +120,8 @@ const StoreList = () => {
             placeholder="가게명 검색"
             className="border border-gray-300 rounded px-3 py-1 w-60 focus:outline-none"
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleSearch()}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
 
           {/* 버튼클릭해서 검색? */}
