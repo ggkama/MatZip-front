@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IoPerson,
@@ -26,6 +26,7 @@ const MyPage = () => {
       .get("/api/profile/form")
       .then((res) => {
         const data = res.data;
+
         setUserInfo({
           userNo: data.userNo,
           userName: data.userName,

@@ -22,6 +22,9 @@ node_modules/*
 application-private.yml
 
 .vscode/*
+<<<<<<< HEAD
 
 conf.js
 
+=======
+>>>>>>> 682a305cbf344ffd672b1ec5475d94635eac4eec
