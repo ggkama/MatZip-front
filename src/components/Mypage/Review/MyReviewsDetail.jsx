@@ -18,6 +18,7 @@ const MyReviewsDetail = () => {
       .get(`/api/review/myreview/detail/${reviewNo}`)
       .then((res) => {
         setReviews(res.data);
+        console.log("내 리뷰 불러오기 성공", res.data);
       })
       .catch((err) => {
         console.error("내 리뷰 불러오기 실패", err);
@@ -39,8 +40,8 @@ const MyReviewsDetail = () => {
     }
   };
 
-  // 수정
-  const handleEdit = (review) => {
+    // 수정
+    const handleEdit = (review) => {
     navi("/review-form", {
       state: {
         review,
@@ -53,6 +54,14 @@ const MyReviewsDetail = () => {
         isEdit: true,
       },
     });
+  };
+
+  
+  const getReviewImageUrl = (url) => {
+    if (!url) return "";
+    if (url.startsWith("http")) return url;
+    if (url.startsWith("/uploads")) return `http://localhost:8080${url}`;
+    return url; 
   };
 
   return (
@@ -88,11 +97,7 @@ const MyReviewsDetail = () => {
           ) : review.reviewImageUrl ? (
             <div className="flex gap-4 mb-4">
               <img
-                src={
-                  review.reviewImageUrl.startsWith("http")
-                    ? review.reviewImageUrl
-                    : `http://localhost:8080${review.reviewImageUrl}`
-                }
+                src={review.reviewImageUrl.startsWith("http") ? review.reviewImageUrl : `${review.reviewImageUrl}`}
                 alt="리뷰 이미지"
                 className="w-[100px] h-[100px] object-cover rounded bg-gray-200"
               />

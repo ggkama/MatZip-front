@@ -35,15 +35,17 @@ function StoreReviewList({ storeNo }) {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    if (!storeNo) return;
-    apiService
-      .get(`/api/review/store/${storeNo}`)
-      .then((res) => {
-        console.log("스토어 리뷰 응답:", res.data); // ← 여기!
-        setReviews(res.data);
-      })
-      .catch(() => setReviews([]));
-  }, [storeNo]);
+
+  if (!storeNo) return;
+  apiService
+    .get(`/api/review/store/${storeNo}`)
+    .then((res) => {
+      setReviews(res.data);
+    })
+    .catch(() => setReviews([]));
+}, [storeNo]);
+
+
 
   if (!reviews || reviews.length === 0) {
     return <div className="text-gray-400 py-8">리뷰가 아직 없습니다.</div>;
@@ -60,11 +62,7 @@ function StoreReviewList({ storeNo }) {
           {/* 유저 & 날짜 */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
-              {/* 프로필 */}
-              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold">
-                {/* 실제로는 userProfile 이미지 URL 또는 닉네임 */}
-                {review.userNickname ? review.userNickname[0] : "?"}
-              </div>
+              
               <span className="font-semibold">{review.userName}</span>
             </div>
             <div className="text-gray-400 text-sm">
