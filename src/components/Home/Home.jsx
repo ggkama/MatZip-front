@@ -106,7 +106,7 @@ const Home = () => {
       </div>
 
       {/* 최신맛집 캐러셀 */}
-      <div className="px-20 mt-16">
+      <div className=" max-w-[1024px] mt-16 mx-auto">
         <h3 className="text-[24px] font-bold mb-5">최신맛집</h3>
 
         {latestStores.length > 0 && (

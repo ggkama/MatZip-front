@@ -116,7 +116,7 @@ const StoreList = () => {
     <div className="min-h-[calc(100vh-180px)] py-10">
       <div className="">
         {/* 음식 카테고리 + 행정구 선택 묶음 */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
           {/* 음식 카테고리 버튼 */}
           <div className="flex flex-wrap gap-3">
             {FOOD_CATEGORIES.map((type) => {
@@ -125,7 +125,7 @@ const StoreList = () => {
                 <button
                   key={type}
                   onClick={() => handleCategoryClick(type)}
-                  className={`px-6 py-3 rounded-full font-semibold text-[14px] border-1 transition
+                  className={`px-4 py-2 rounded-full font-semibold text-[14px] border-1 transition
             ${
               isActive
                 ? "bg-[#FF6A3D] border-[#FF6A3D] text-white"
@@ -143,7 +143,7 @@ const StoreList = () => {
             <button
               type="button"
               onClick={() => setShowDropdown((prev) => !prev)}
-              className="leading-[1] px-6 py-3 rounded-full font-bold text-sm bg-[#FF6A3D] text-white flex items-center gap-1 text-[14px] shadow-lg"
+              className="leading-[1] px-5 py-2 rounded-full font-bold text-sm bg-[#FF6A3D] text-white flex items-center gap-1 text-[14px] shadow-lg"
             >
               {address === "전체" ? "자치구 선택" : address}
               <svg

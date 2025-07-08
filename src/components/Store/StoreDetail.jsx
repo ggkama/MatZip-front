@@ -97,17 +97,17 @@ const StoreDetail = () => {
             </span>
           </div>
           <div className="flex gap-2 flex-wrap">
-            <span className="bg-[#FF6A3D] text-white px-5 py-2 rounded-full text-[14px] font-semibold">
+            <span className="bg-[#FF6A3D] text-white px-4 py-1 rounded-full text-[14px] font-semibold">
               {store.categoryAddress}
             </span>
-            <span className="bg-[#FF6A3D] text-white px-5 py-2 rounded-full text-[14px] font-semibold">
+            <span className="bg-[#FF6A3D] text-white px-4 py-1 rounded-full text-[14px] font-semibold">
               {store.categoryFoodtype}
             </span>
             {store.categoryConvenience &&
               store.categoryConvenience.map((conv, idx) => (
                 <span
                   key={idx}
-                  className="bg-[#FF6A3D] text-white px-5 py-2 rounded-full text-[14px] font-semibold"
+                  className="bg-[#FF6A3D] text-white px-4 py-1 rounded-full text-[14px] font-semibold"
                 >
                   {convenienceKeyToLabel(conv)}
                 </span>

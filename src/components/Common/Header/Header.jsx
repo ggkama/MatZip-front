@@ -110,7 +110,7 @@ const Header = () => {
                 >
                   로그인
                 </span>
-                <span className="mx-3 text-gray-300">|</span>
+                <span className="mx-3 text-white">|</span>
                 <span
                   className="cursor-pointer hover:opacity-65"
                   onClick={() => navigate("/signup")}
