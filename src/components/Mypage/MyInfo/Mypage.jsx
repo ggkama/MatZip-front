@@ -26,6 +26,7 @@ const MyPage = () => {
       .get("/api/profile/form")
       .then((res) => {
         const data = res.data;
+
         setUserInfo({
           userId: data.userId,
           userName: data.userName,
