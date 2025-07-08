@@ -61,7 +61,7 @@ const ImageUploader = ({
                 className="relative border-gray-100 rounded overflow-hidden w-full aspect-square"
               >
                 <img
-                  src={`http://localhost:8080${img}`}
+                  src={`${img}`}
                   alt={`기존 이미지 ${idx + 1}`}
                   className="w-full h-full object-cover"
                 />
