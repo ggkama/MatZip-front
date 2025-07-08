@@ -1,10 +1,11 @@
 import KakaoLoginImage from "../../../assets/img/kakao_login_button.png";
 
 const REDIRECT_URI = "http://localhost:8080/api/auth/login/kakao";
+const REST_API_KEY = "e63001707d8e08b9ff740c1cbfafd939";
 
 const KakaoLoginButton = () => {
   const handleKakaoLogin = () => {
-    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${window.ENV.REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
 
     console.log(KAKAO_AUTH_URL);
 

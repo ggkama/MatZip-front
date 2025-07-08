@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../../api/axiosInstance";
 
 const KakaoLogin = () => {
   const navigate = useNavigate();
@@ -13,15 +12,12 @@ const KakaoLogin = () => {
     const userRole = params.get("userRole");
 
     if (accessToken && userNo) {
-      sessionStorage.setItem(
-        "user",
-        JSON.stringify({
-          accessToken,
-          refreshToken,
-          userNo,
-          userRole,
-        })
-      );
+      sessionStorage.setItem("tokens", JSON.stringify({ accessToken }));
+
+      sessionStorage.setItem("refreshToken", refreshToken);
+      sessionStorage.setItem("userNo", userNo);
+      sessionStorage.setItem("userRole", userRole);
+
       alert("카카오 로그인 성공!");
       navigate("/");
     } else {

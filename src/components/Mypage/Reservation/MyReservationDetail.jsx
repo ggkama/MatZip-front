@@ -59,11 +59,11 @@ const MyReservationDetail = () => {
 
   return (
     <div className="flex flex-col items-center pt-10 pb-20 px-4">
-      <h2 className="text-3xl font-bold mb-10">내 예약 내역</h2>
+      <h2 className="text-3xl font-bold mb-10">내 예약 상세</h2>
 
       {reservation.status === "N" && (
-        <div className="w-full flex justify-center">
-          <div className="w-full max-w-[720px] bg-red-100 border border-red-300 text-red-700 px-6 py-4 mb-10 rounded-lg flex items-center gap-3">
+        <div className="w-full max-w-[448px] mb-6">
+          <div className="bg-red-100 border border-red-300 text-red-700 px-6 py-4 rounded-lg flex items-center gap-3">
             <svg
               className="w-6 h-6 text-red-500 shrink-0"
               fill="none"
@@ -83,36 +83,37 @@ const MyReservationDetail = () => {
           </div>
         </div>
       )}
-      <div className="flex flex-col md:flex-row gap-10 max-w-4xl w-full justify-center items-start">
-        <div className="w-[300px] h-[300px] bg-gray-300 shrink-0">
+
+      <div className="w-full max-w-md bg-white shadow-lg rounded-xl overflow-hidden">
+        <div className="w-full h-64 bg-gray-300">
           {reservation.storeImage ? (
             <img
-              src={`${reservation.storeImage}`}
+              src={reservation.storeImage}
               alt="가게 이미지"
-              className="w-full h-full object-cover rounded"
+              className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gray-300 flex items-center justify-center text-sm text-gray-500">
+            <div className="w-full h-full flex items-center justify-center text-sm text-gray-500">
               이미지 없음
             </div>
           )}
         </div>
 
-        <div className="space-y-3 text-sm w-[380px]">
-          <InfoRow label="매장명" value={reservation.storeName} />
-          <InfoRow
+        <div className="p-6 space-y-3 text-sm">
+          <InfoCard label="매장명" value={reservation.storeName} />
+          <InfoCard
             label="주소"
             value={`${reservation.storeAddress1} ${reservation.storeAddress2}`}
           />
-          <InfoRow label="매장번호" value={reservation.storePhone} />
-          <InfoRow label="예약 일시" value={reservation.reservationDate} />
-          <InfoRow label="예약 시간" value={reservation.reservationTime} />
-          <InfoRow label="인원수" value={`${reservation.personCount}명`} />
+          <InfoCard label="매장번호" value={reservation.storePhone} />
+          <InfoCard label="예약 일시" value={reservation.reservationDate} />
+          <InfoCard label="예약 시간" value={reservation.reservationTime} />
+          <InfoCard label="인원수" value={`${reservation.personCount}명`} />
 
           {reservation.status !== "N" && (
             <button
               onClick={() => setShowCancelModal(true)}
-              className="mt-4 bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600 cursor-pointer"
+              className="mt-4 w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
             >
               예약취소
             </button>
@@ -122,7 +123,7 @@ const MyReservationDetail = () => {
 
       <button
         onClick={() => navigate("/my-reservation-list")}
-        className="mt-12 bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 cursor-pointer"
+        className="mt-8 bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600"
       >
         목록
       </button>
@@ -141,10 +142,10 @@ const MyReservationDetail = () => {
   );
 };
 
-const InfoRow = ({ label, value }) => (
-  <div className="flex text-sm">
-    <div className="w-30 font-bold mr-3">{label}</div>
-    <div className="text-gray-600">{value}</div>
+const InfoCard = ({ label, value }) => (
+  <div className="flex justify-between border-b pb-2 border-gray-400">
+    <div className="font-semibold text-gray-800 w-28">{label}</div>
+    <div className="text-gray-600 text-right flex-1">{value}</div>
   </div>
 );
 

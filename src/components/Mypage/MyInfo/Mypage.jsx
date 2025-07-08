@@ -16,6 +16,7 @@ const MyPage = () => {
   const navi = useNavigate();
 
   const [userInfo, setUserInfo] = useState({
+    userNo: null,
     userId: "",
     userName: "",
     profileImage: null,
@@ -29,6 +30,7 @@ const MyPage = () => {
         console.log(data);
 
         setUserInfo({
+          userNo: data.userNo,
           userId: data.userId,
           userName: data.userName,
           profileImage: data.profileImage ? data.profileImage : null,
@@ -45,6 +47,7 @@ const MyPage = () => {
     alert("로그아웃이 완료되었습니다.");
     window.location.href = "/login";
   };
+
   return (
     <div className="max-w-xl mx-auto pt-10 pb-20 text-center mypage-content">
       {/* 제목 */}
@@ -61,7 +64,9 @@ const MyPage = () => {
         ) : (
           <div className="w-30 h-30 bg-gray-200 rounded-full flex items-center justify-center text-3xl mb-4" />
         )}
-        <p className="text-sm text-gray-500">{userInfo.userId}</p>
+        <p className="text-sm text-gray-500">
+          <strong>{userInfo.userId}</strong>{" "}
+        </p>
         <p className="text-lg font-bold">{userInfo.userName}님 환영합니다.</p>
         <button
           onClick={handleLogout}
