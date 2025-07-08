@@ -43,7 +43,7 @@ const Header = () => {
 
   return (
     <header className="border-b border-gray-200 bg-white">
-      <div className="header-container flex justify-between items-center py-2 max-w-5xl mx-auto px-4">
+      <div className="header-container flex justify-between items-center py-2 max-w-5xl mx-auto">
         <div
           className="flex items-center gap-2 cursor-pointer"
           onClick={() => navigate("/")}
@@ -95,7 +95,12 @@ const Header = () => {
           >
             HOME
           </li>
-          
+          <li
+            className="hover:underline cursor-pointer"
+            onClick={() => navigate("/stores")}
+          >
+            맛집
+          </li>
           <li
             className="hover:underline cursor-pointer"
             onClick={() => navigate("/notice")}
