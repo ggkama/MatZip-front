@@ -40,8 +40,8 @@ const MyReviewsDetail = () => {
     }
   };
 
-  // 수정
-  const handleEdit = (review) => {
+    // 수정
+    const handleEdit = (review) => {
     navi("/review-form", {
       state: {
         review,
@@ -56,16 +56,13 @@ const MyReviewsDetail = () => {
     });
   };
 
-  // ==================  여기만 수정 ==================
-  // 실제 이미지 url을 반환하는 함수 (로컬/S3 모두 지원)
+  
   const getReviewImageUrl = (url) => {
     if (!url) return "";
-    // S3인 경우(http로 시작)는 그대로, uploads면 localhost:8080 붙여주기
     if (url.startsWith("http")) return url;
     if (url.startsWith("/uploads")) return `http://localhost:8080${url}`;
-    return url; // 혹시 모를 예외
+    return url; 
   };
-  // ==================================================
 
   return (
     <div className="py-12 max-w-4xl mx-auto">
@@ -74,7 +71,9 @@ const MyReviewsDetail = () => {
       {reviews.map((review, idx) => (
         <div key={idx} className="border rounded-md p-8 mb-10">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-bold">{review.storeName || "가게명 없음"}</h3>
+            <h3 className="text-lg font-bold">
+              {review.storeName || "가게명 없음"}
+            </h3>
             <span className="text-sm text-gray-500">
               {formatDate(review.createDate)}
             </span>
@@ -89,9 +88,7 @@ const MyReviewsDetail = () => {
               {review.imageUrls.map((url, idx) => (
                 <img
                   key={idx}
-
-                  src={getReviewImageUrl(url)}
-
+                  src={`${url}`}
                   alt={`리뷰 이미지${idx + 1}`}
                   className="w-[100px] h-[100px] object-cover rounded bg-gray-200"
                 />
@@ -100,9 +97,7 @@ const MyReviewsDetail = () => {
           ) : review.reviewImageUrl ? (
             <div className="flex gap-4 mb-4">
               <img
-
-                src={getReviewImageUrl(review.reviewImageUrl)}
-
+                src={review.reviewImageUrl.startsWith("http") ? review.reviewImageUrl : `${review.reviewImageUrl}`}
                 alt="리뷰 이미지"
                 className="w-[100px] h-[100px] object-cover rounded bg-gray-200"
               />
@@ -143,7 +138,10 @@ const formatDate = (dateStr) => {
   if (!dateStr) return "";
   const date = new Date(dateStr);
   if (isNaN(date)) return "날짜 오류";
-  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}.${String(date.getDate()).padStart(2, "0")}`;
 };
 
 export default MyReviewsDetail;

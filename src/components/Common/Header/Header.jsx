@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import logo from "../../../assets/img/logo.svg";
 import { useNavigate, useLocation } from "react-router-dom";
-import axiosInstance from "../../../api/axiosInstance";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -11,11 +10,12 @@ const Header = () => {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    const userInfo = sessionStorage.getItem("user");
-    if (userInfo) {
-      const user = JSON.parse(userInfo);
+    const tokenInfo = sessionStorage.getItem("tokens");
+    const userRole = sessionStorage.getItem("userRole");
+
+    if (tokenInfo) {
       setIsLoggedIn(true);
-      setRole(user.userRole || "");
+      setRole(userRole || "");
     } else {
       setIsLoggedIn(false);
       setRole("");
@@ -23,8 +23,11 @@ const Header = () => {
   }, [location.pathname]);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("user");
     sessionStorage.removeItem("tokens");
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("userRole");
+    sessionStorage.removeItem("userNo");
+
     setIsLoggedIn(false);
     setRole("");
     navigate("/");

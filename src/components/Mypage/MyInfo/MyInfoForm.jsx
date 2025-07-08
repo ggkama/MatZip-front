@@ -2,18 +2,16 @@ import React, { useState, useEffect } from "react";
 import { apiService } from "../../../api/apiService";
 import { IoCamera } from "react-icons/io5";
 
-const API_URL = window.ENV?.API_URL || import.meta.env.VITE_API_URL;
-
 const MyInfo = () => {
   const [userInfo, setUserInfo] = useState({
     userId: "",
     userName: "",
     userNickname: "",
     userPhone: "",
-    profileImage: null,
   });
 
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [profileImageFile, setProfileImageFile] = useState(null);
 
   useEffect(() => {
     let previewToRevoke = null;
@@ -21,16 +19,18 @@ const MyInfo = () => {
     apiService
       .get("/api/profile/form")
       .then((res) => {
-        console.log("🟢 프로필 응답:", res);
         const data = res.data;
         setUserInfo({
-          ...data,
-          profileImage: null,
+          userId: data.userId || "",
+          userName: data.userName || "",
+          userNickname: data.userNickname || "",
+          userPhone: data.userPhone || "",
         });
 
         if (data.profileImage) {
-          const fullUrl = `${data.profileImage}`;
-          setPreviewUrl(fullUrl);
+          setPreviewUrl(data.profileImage);
+        } else {
+          setPreviewUrl(null); // 기본 이미지 없음 처리
         }
       })
       .catch((err) => {
@@ -69,14 +69,18 @@ const MyInfo = () => {
 
     const tempUrl = URL.createObjectURL(file);
     setPreviewUrl(tempUrl);
-    setUserInfo((prev) => ({ ...prev, profileImage: file }));
+    setProfileImageFile(file);
   };
 
   const isValid = () => {
     const { userName, userNickname, userPhone } = userInfo;
-    if (userName.length < 2 || userName.length > 20) return false;
-    if (userNickname.length < 2 || userNickname.length > 20) return false;
-    if (!/^010-\d{4}-\d{4}$/.test(userPhone)) return false;
+    const trimmedPhone = userPhone.trim();
+
+    if (userName.trim().length < 2 || userName.trim().length > 20) return false;
+    if (userNickname.trim().length < 2 || userNickname.trim().length > 20)
+      return false;
+    if (!/^010-\d{4}-\d{4}$/.test(trimmedPhone)) return false;
+
     return true;
   };
 
@@ -89,12 +93,12 @@ const MyInfo = () => {
     }
 
     const formData = new FormData();
-    formData.append("userName", userInfo.userName);
-    formData.append("userNickname", userInfo.userNickname);
-    formData.append("userPhone", userInfo.userPhone);
+    formData.append("userName", userInfo.userName.trim());
+    formData.append("userNickname", userInfo.userNickname.trim());
+    formData.append("userPhone", userInfo.userPhone.trim());
 
-    if (userInfo.profileImage) {
-      formData.append("profileImage", userInfo.profileImage);
+    if (profileImageFile) {
+      formData.append("profileImage", profileImageFile);
     }
 
     apiService

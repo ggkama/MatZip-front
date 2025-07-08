@@ -7,8 +7,8 @@ const MyReservationList = () => {
   const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
   const [error, setError] = useState("");
-  const [currentPage, setCurrentPage] = useState(0); // 페이지 상태 추가
-  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const loginUser = JSON.parse(sessionStorage.getItem("user"));
@@ -19,11 +19,11 @@ const MyReservationList = () => {
 
     axiosInstance
       .patch("/api/reservation/review/status-update")
-      .then(() => {
-        return axiosInstance.get(
+      .then(() =>
+        axiosInstance.get(
           `/api/reservation/mypage/${loginUser.userNo}?page=${currentPage}`
-        );
-      })
+        )
+      )
       .then((res) => {
         const list = res.data.reservationList.map((r) => {
           let reviewStatus = "작성자격없음";
@@ -40,7 +40,7 @@ const MyReservationList = () => {
         });
 
         setReservations(list);
-        setTotalPages(res.data.totalPages); // 총 페이지 수 저장
+        setTotalPages(res.data.totalPages);
       })
       .catch((err) => {
         console.error("예약 목록 조회 실패", err);
@@ -93,70 +93,82 @@ const MyReservationList = () => {
               </tr>
             </thead>
             <tbody>
-              {reservations.map((res, idx) => (
-                <tr
-                  key={idx}
-                  className="border-b border-gray-300 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleViewDetail(res)}
-                >
-                  <td className="py-3">
-                    {res.reservationDate
-                      ? new Date(res.reservationDate)
-                          .toLocaleDateString("ko-KR", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          })
-                          .replace(/\. /g, "")
-                          .replace(".", "")
-                      : "-"}
-                  </td>
-                  <td
-                    className="truncate max-w-[160px] px-2"
-                    title={res.storeName}
+              {reservations.map((res, idx) => {
+                const isDeleted = res.isDeleted === "Y";
+
+                return (
+                  <tr
+                    key={idx}
+                    className={`border-b border-gray-300 ${
+                      isDeleted
+                        ? "bg-gray-100 cursor-default opacity-50"
+                        : "hover:bg-gray-100 cursor-pointer"
+                    }`}
+                    onClick={() => {
+                      if (!isDeleted) handleViewDetail(res);
+                    }}
                   >
-                    {res.storeName}
-                  </td>
-                  <td>{res.reservationTime}</td>
-                  <td>{res.personCount}</td>
-                  <td
-                    className={
-                      res.reservationStatus === "예약취소"
-                        ? "text-red-500"
-                        : "text-gray-700"
-                    }
-                  >
-                    {res.reservationStatus}
-                  </td>
-                  <td>
-                    {res.status === "N" || !isPastReservation(res) ? (
-                      "-"
-                    ) : res.reviewStatus === "작성하기" ? (
-                      <button
-                        className="bg-orange-400 text-white text-xs px-3 py-1 rounded hover:bg-orange-500"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleWriteReview(res);
-                        }}
-                      >
-                        작성하기
-                      </button>
-                    ) : res.reviewStatus === "작성완료" ? (
-                      <button
-                        className="bg-orange-300 text-white text-xs px-3 py-1 rounded hover:bg-orange-400"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleViewReview(res);
-                        }}
-                      >
-                        작성한 리뷰보기
-                      </button>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    <td className="py-3">
+                      {res.reservationDate
+                        ? new Date(res.reservationDate)
+                            .toLocaleDateString("ko-KR", {
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                            })
+                            .replace(/\. /g, "")
+                            .replace(".", "")
+                        : "-"}
+                    </td>
+                    <td
+                      className="truncate max-w-[160px] px-2"
+                      title={res.storeName}
+                    >
+                      {isDeleted ? "삭제된 가게입니다" : res.storeName}
+                    </td>
+                    <td>{res.reservationTime}</td>
+                    <td>{res.personCount}</td>
+                    <td
+                      className={
+                        res.reservationStatus === "예약취소"
+                          ? "text-red-500"
+                          : "text-gray-700"
+                      }
+                    >
+                      {res.reservationStatus}
+                    </td>
+                    <td>
+                      {res.status === "N" ||
+                      !isPastReservation(res) ||
+                      isDeleted ? (
+                        "-"
+                      ) : res.reviewStatus === "작성하기" ? (
+                        <button
+                          className="bg-orange-400 text-white text-xs px-3 py-1 rounded hover:bg-orange-500"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleWriteReview(res);
+                          }}
+                        >
+                          작성하기
+                        </button>
+                      ) : res.reviewStatus === "작성완료" ? (
+                        <button
+                          className="bg-orange-300 text-white text-xs px-3 py-1 rounded hover:bg-orange-400"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewReview(res);
+                          }}
+                        >
+                          작성한 리뷰보기
+                        </button>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 

@@ -14,7 +14,8 @@ export const generateHourlyTimes = (startTime, endTime) => {
   const start = new Date(`1970-01-01T${startTime}`);
   const end = new Date(`1970-01-01T${endTime}`);
 
-  while (start <= end) {
+  // end 시간 직전까지만 반복
+  while (start < end) {
     const h = start.getHours().toString().padStart(2, "0");
     const m = start.getMinutes().toString().padStart(2, "0");
     times.push(`${h}:${m}`);
