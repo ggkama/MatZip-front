@@ -18,6 +18,7 @@ const MyReviewsDetail = () => {
       .get(`/api/review/myreview/detail/${reviewNo}`)
       .then((res) => {
         setReviews(res.data);
+        console.log("내 리뷰 불러오기 성공", res.data);
       })
       .catch((err) => {
         console.error("내 리뷰 불러오기 실패", err);
@@ -39,8 +40,8 @@ const MyReviewsDetail = () => {
     }
   };
 
-    // 수정
-    const handleEdit = (review) => {
+  // 수정
+  const handleEdit = (review) => {
     navi("/review-form", {
       state: {
         review,
@@ -54,6 +55,17 @@ const MyReviewsDetail = () => {
       },
     });
   };
+
+  // ==================  여기만 수정 ==================
+  // 실제 이미지 url을 반환하는 함수 (로컬/S3 모두 지원)
+  const getReviewImageUrl = (url) => {
+    if (!url) return "";
+    // S3인 경우(http로 시작)는 그대로, uploads면 localhost:8080 붙여주기
+    if (url.startsWith("http")) return url;
+    if (url.startsWith("/uploads")) return `http://localhost:8080${url}`;
+    return url; // 혹시 모를 예외
+  };
+  // ==================================================
 
   return (
     <div className="py-12 max-w-4xl mx-auto">
@@ -77,7 +89,9 @@ const MyReviewsDetail = () => {
               {review.imageUrls.map((url, idx) => (
                 <img
                   key={idx}
-                  src={`http://localhost:8080${url}`}
+
+                  src={getReviewImageUrl(url)}
+
                   alt={`리뷰 이미지${idx + 1}`}
                   className="w-[100px] h-[100px] object-cover rounded bg-gray-200"
                 />
@@ -86,7 +100,9 @@ const MyReviewsDetail = () => {
           ) : review.reviewImageUrl ? (
             <div className="flex gap-4 mb-4">
               <img
-                src={review.reviewImageUrl.startsWith("http") ? review.reviewImageUrl : `http://localhost:8080${review.reviewImageUrl}`}
+
+                src={getReviewImageUrl(review.reviewImageUrl)}
+
                 alt="리뷰 이미지"
                 className="w-[100px] h-[100px] object-cover rounded bg-gray-200"
               />

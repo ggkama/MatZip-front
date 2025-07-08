@@ -22,7 +22,7 @@ function BlogSection({ storeName }) {
       {blogs.map((blog, idx) => (
         <div key={idx} className="mb-4">
           <a href={blog.link} target="_blank" rel="noopener noreferrer">
-            <strong>{blog.title.replace(/<[^>]*>/g, "")}</strong>ㄱ
+            <strong>{blog.title.replace(/<[^>]*>/g, "")}</strong>
           </a>
           <p>{blog.description.replace(/<[^>]*>/g, "")}</p>
         </div>

@@ -15,7 +15,7 @@ function ReviewImages({ imageUrls, title }) {
         img ? (
           <img
             key={idx}
-            src={`http://localhost:8080${img}`}
+            src={`${img}`}
             alt={`리뷰이미지${idx}`}
             className="w-32 h-32 rounded bg-gray-100 object-cover"
           />
@@ -40,7 +40,7 @@ function StoreReviewList({ storeNo }) {
   apiService
     .get(`/api/review/store/${storeNo}`)
     .then((res) => {
-      console.log("스토어 리뷰 응답:", res.data);  // ← 여기!
+      console.log("스토어 리뷰 응답:", res.data); 
       setReviews(res.data);
     })
     .catch(() => setReviews([]));
@@ -59,11 +59,7 @@ function StoreReviewList({ storeNo }) {
           {/* 유저 & 날짜 */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
-              {/* 프로필 */}
-              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold">
-                {/* 실제로는 userProfile 이미지 URL 또는 닉네임 */}
-                {review.userNickname ? review.userNickname[0] : "?"}
-              </div>
+              
               <span className="font-semibold">{review.userName}</span>
             </div>
             <div className="text-gray-400 text-sm">
