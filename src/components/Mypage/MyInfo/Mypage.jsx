@@ -17,6 +17,7 @@ const MyPage = () => {
 
   const [userInfo, setUserInfo] = useState({
     userNo: null,
+    userId: "",
     userName: "",
     profileImage: null,
   });
@@ -29,6 +30,7 @@ const MyPage = () => {
 
         setUserInfo({
           userNo: data.userNo,
+          userId: data.userId,
           userName: data.userName,
           profileImage: data.profileImage
             ? `${API_URL}${data.profileImage}`
@@ -63,7 +65,9 @@ const MyPage = () => {
         ) : (
           <div className="w-30 h-30 bg-gray-200 rounded-full flex items-center justify-center text-3xl mb-4" />
         )}
-        <p className="text-sm text-gray-500">회원번호: {userInfo.userNo}</p>
+        <p className="text-sm text-gray-500">
+          <strong>{userInfo.userId}</strong>{" "}
+        </p>
         <p className="text-lg font-bold">{userInfo.userName}님 환영합니다.</p>
         <button
           onClick={handleLogout}
