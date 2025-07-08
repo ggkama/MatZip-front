@@ -192,7 +192,7 @@ const StoreList = () => {
                 >
                   {store.imageList && store.imageList[i] ? (
                     <img
-                      src={`http://localhost:8080${store.imageList[i]}`}
+                      src={`${store.imageList[i]}`}
                       alt={`가게사진${i + 1}`}
                       className="w-full h-full object-cover rounded"
                       onError={(e) => (e.target.style.display = "none")}
