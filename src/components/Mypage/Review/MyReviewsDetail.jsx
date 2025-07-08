@@ -39,8 +39,8 @@ const MyReviewsDetail = () => {
     }
   };
 
-    // 수정
-    const handleEdit = (review) => {
+  // 수정
+  const handleEdit = (review) => {
     navi("/review-form", {
       state: {
         review,
@@ -62,7 +62,9 @@ const MyReviewsDetail = () => {
       {reviews.map((review, idx) => (
         <div key={idx} className="border rounded-md p-8 mb-10">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-bold">{review.storeName || "가게명 없음"}</h3>
+            <h3 className="text-lg font-bold">
+              {review.storeName || "가게명 없음"}
+            </h3>
             <span className="text-sm text-gray-500">
               {formatDate(review.createDate)}
             </span>
@@ -77,7 +79,7 @@ const MyReviewsDetail = () => {
               {review.imageUrls.map((url, idx) => (
                 <img
                   key={idx}
-                  src={`http://localhost:8080${url}`}
+                  src={`${url}`}
                   alt={`리뷰 이미지${idx + 1}`}
                   className="w-[100px] h-[100px] object-cover rounded bg-gray-200"
                 />
@@ -86,7 +88,11 @@ const MyReviewsDetail = () => {
           ) : review.reviewImageUrl ? (
             <div className="flex gap-4 mb-4">
               <img
-                src={review.reviewImageUrl.startsWith("http") ? review.reviewImageUrl : `http://localhost:8080${review.reviewImageUrl}`}
+                src={
+                  review.reviewImageUrl.startsWith("http")
+                    ? review.reviewImageUrl
+                    : `http://localhost:8080${review.reviewImageUrl}`
+                }
                 alt="리뷰 이미지"
                 className="w-[100px] h-[100px] object-cover rounded bg-gray-200"
               />
@@ -127,7 +133,10 @@ const formatDate = (dateStr) => {
   if (!dateStr) return "";
   const date = new Date(dateStr);
   if (isNaN(date)) return "날짜 오류";
-  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}.${String(date.getDate()).padStart(2, "0")}`;
 };
 
 export default MyReviewsDetail;

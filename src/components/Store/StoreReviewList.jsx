@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { apiService } from "../../api/apiService";
 import { FaStar } from "react-icons/fa";
 
-// 최대 4장 이미지 
+// 최대 4장 이미지
 function ReviewImages({ imageUrls, title }) {
-
   const images = imageUrls && imageUrls.length > 0 ? imageUrls : [];
   const padded = [...images];
   while (padded.length < 4) padded.push(null);
@@ -15,7 +14,7 @@ function ReviewImages({ imageUrls, title }) {
         img ? (
           <img
             key={idx}
-            src={`http://localhost:8080${img}`}
+            src={`${img}`}
             alt={`리뷰이미지${idx}`}
             className="w-32 h-32 rounded bg-gray-100 object-cover"
           />
@@ -36,16 +35,15 @@ function StoreReviewList({ storeNo }) {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-  if (!storeNo) return;
-  apiService
-    .get(`/api/review/store/${storeNo}`)
-    .then((res) => {
-      console.log("스토어 리뷰 응답:", res.data);  // ← 여기!
-      setReviews(res.data);
-    })
-    .catch(() => setReviews([]));
-}, [storeNo]);
-
+    if (!storeNo) return;
+    apiService
+      .get(`/api/review/store/${storeNo}`)
+      .then((res) => {
+        console.log("스토어 리뷰 응답:", res.data); // ← 여기!
+        setReviews(res.data);
+      })
+      .catch(() => setReviews([]));
+  }, [storeNo]);
 
   if (!reviews || reviews.length === 0) {
     return <div className="text-gray-400 py-8">리뷰가 아직 없습니다.</div>;
@@ -55,7 +53,10 @@ function StoreReviewList({ storeNo }) {
     <section>
       <h3 className="font-bold text-lg mb-4">방문자 리뷰</h3>
       {reviews.map((review) => (
-        <div key={review.reviewNo} className="bg-white p-6 rounded-lg shadow mb-8">
+        <div
+          key={review.reviewNo}
+          className="bg-white p-6 rounded-lg shadow mb-8"
+        >
           {/* 유저 & 날짜 */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
@@ -71,9 +72,14 @@ function StoreReviewList({ storeNo }) {
             </div>
           </div>
           {/* 이미지 4칸 (빈칸은 플홀) */}
-          <ReviewImages imageUrls={review.imageUrls} title={review.title || "이미지가 없습니다"} />
+          <ReviewImages
+            imageUrls={review.imageUrls}
+            title={review.title || "이미지가 없습니다"}
+          />
           {/* 내용 */}
-          <div className="text-sm mt-2 mb-3 whitespace-pre-line">{review.reviewContent}</div>
+          <div className="text-sm mt-2 mb-3 whitespace-pre-line">
+            {review.reviewContent}
+          </div>
           {/* 별점 */}
           <div className="flex items-center text-orange-500 font-semibold gap-1 self-end">
             <FaStar size={16} />

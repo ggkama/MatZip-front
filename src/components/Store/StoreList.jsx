@@ -48,6 +48,7 @@ const StoreList = () => {
   // 데이터 전체 조회
   useEffect(() => {
     apiService
+
       .get("/api/store/list", { params: { search: search.trim() } })
       .then((res) => {
         setAllStores(res.data.content ?? []);
@@ -181,7 +182,9 @@ const StoreList = () => {
               </span>
             </div>
             <div className="flex items-center mb-2 text-sm gap-3">
-              <span className="font-semibold text-[#F2994A]">[{store.categoryAddress}]</span>
+              <span className="font-semibold text-[#F2994A]">
+                [{store.categoryAddress}]
+              </span>
               <span className="text-gray-700">{store.categoryFoodtype}</span>
             </div>
             <div className="flex gap-4 mb-4">
@@ -213,7 +216,11 @@ const StoreList = () => {
               key={i}
               onClick={() => setCurrentPage(i + 1)}
               className={`w-7 h-7 rounded-full border-2 border-orange-300 flex items-center justify-center text-sm
-                ${currentPage === i + 1 ? "bg-orange-400 text-white border-orange-400" : "bg-white text-orange-500"}
+                ${
+                  currentPage === i + 1
+                    ? "bg-orange-400 text-white border-orange-400"
+                    : "bg-white text-orange-500"
+                }
               `}
             >
               {i + 1}
@@ -228,8 +235,8 @@ const StoreList = () => {
             placeholder="가게명 검색"
             className="border border-gray-300 rounded px-3 py-1 w-60 focus:outline-none"
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleSearch()}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
         </div>
       </div>
