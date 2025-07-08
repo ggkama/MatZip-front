@@ -27,14 +27,13 @@ const MyPage = () => {
       .get("/api/profile/form")
       .then((res) => {
         const data = res.data;
+        console.log(data);
 
         setUserInfo({
           userNo: data.userNo,
           userId: data.userId,
           userName: data.userName,
-          profileImage: data.profileImage
-            ? `${API_URL}${data.profileImage}`
-            : null,
+          profileImage: data.profileImage ? data.profileImage : null,
         });
       })
       .catch((err) => {
