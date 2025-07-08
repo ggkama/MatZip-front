@@ -39,7 +39,7 @@ const Login = () => {
               userRole: userInfo.userRole,
             })
           );
-
+          sessionStorage.setItem("userRole", userInfo.userRole);
           alert(response.data.message);
 
           if (userInfo.userRole === "ROLE_ADMIN") {

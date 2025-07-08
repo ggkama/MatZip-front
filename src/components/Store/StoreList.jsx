@@ -125,11 +125,11 @@ const StoreList = () => {
                 <button
                   key={type}
                   onClick={() => handleCategoryClick(type)}
-                  className={`px-6 py-3 rounded-full font-semibold text-[14px] border-2 transition shadow-lg
+                  className={`px-6 py-3 rounded-full font-semibold text-[14px] border-1 transition
             ${
               isActive
-                ? "bg-orange-500 border-orange-500 text-white"
-                : "bg-white  text-orange-500"
+                ? "bg-[#FF6A3D] border-[#FF6A3D] text-white"
+                : "bg-white  text-[#FF6A3D]"
             }`}
                 >
                   {type}
@@ -143,7 +143,7 @@ const StoreList = () => {
             <button
               type="button"
               onClick={() => setShowDropdown((prev) => !prev)}
-              className="leading-[1] px-6 py-3 rounded-full font-bold text-sm bg-orange-500 text-white flex items-center gap-1 text-[14px] shadow-lg"
+              className="leading-[1] px-6 py-3 rounded-full font-bold text-sm bg-[#FF6A3D] text-white flex items-center gap-1 text-[14px] shadow-lg"
             >
               {address === "전체" ? "자치구 선택" : address}
               <svg
@@ -164,16 +164,16 @@ const StoreList = () => {
             </button>
 
             {showDropdown && (
-              <div className="absolute right-0 mt-2 w-[550px] bg-white border-gray-500 rounded-xl shadow-lg p-4 z-20">
+              <div className="absolute right-0 mt-2 w-[480px] bg-white border-gray-500 rounded-xl shadow-lg p-4 z-20">
                 <div className="grid grid-cols-5 gap-2 justify-items-center">
                   {/* 전체 버튼 */}
                   <button
                     onClick={() => handleDistrictClick("전체")}
-                    className={`px-4 py-3 w-[100px] rounded-full font-medium text-sm border transition
+                    className={`px-4 py-3 w-[80px] rounded-full font-medium text-sm border transition
           ${
             address === "전체"
-              ? "bg-orange-400 text-white border-orange-400"
-              : "bg-white text-orange-500 border-orange-200 hover:bg-orange-100"
+              ? "bg-[#FF6A3D] text-white border-[#FF6A3D]"
+              : "bg-white text-[#FF6A3D] border-orange-200 hover:bg-orange-200"
           }`}
                   >
                     전체
@@ -186,11 +186,11 @@ const StoreList = () => {
                       <button
                         key={district}
                         onClick={() => handleDistrictClick(district)}
-                        className={`px-3 py-3 w-[90px] rounded-full font-medium text-sm border transition
+                        className={`px-3 py-3 w-[80px] rounded-full font-medium text-sm border transition
               ${
                 isSelected
-                  ? "bg-orange-500 text-white border-orange-500"
-                  : "bg-white text-orange-500 border-orange-200 hover:bg-orange-100"
+                  ? "bg-[#FF6A3D] text-white border-[#FF6A3D]"
+                  : "bg-white text-[#FF6A3D] border-[#FF6A3D] hover:bg-orange-100"
               }`}
                       >
                         {district}
@@ -232,11 +232,11 @@ const StoreList = () => {
                 <h3 className="text-lg font-bold text-gray-800 mb-2">
                   {store.storeName}
                 </h3>
-                <p className="text-gray-600 mb-4 h-[45px] overflow-hidden text-ellipsis line-clamp-2">
+                <p className="text-gray-600 mb-4 h-[20px] overflow-hidden text-ellipsis line-clamp-2 text-[14px]">
                   {store.storeAddress1} {store.storeAddress2}
                 </p>
-                <div className="flex gap-2 text-xs text-gray-700 items-center">
-                  <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded font-bold">
+                <div className="flex gap-2 text-gray-700 items-center">
+                  <span className="bg-gray-200 text-black px-3 py-1 rounded font-bold text-[14px]">
                     {store.categoryAddress}
                   </span>
                   <span className="leading-[1]">{store.categoryFoodtype}</span>
@@ -251,11 +251,11 @@ const StoreList = () => {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`w-7 h-7 rounded-full border-2 border-orange-300 flex items-center justify-center text-sm
+              className={`w-7 h-7 rounded-full border-1 border-[#FF6A3D] flex items-center justify-center text-sm
                 ${
                   currentPage === i + 1
-                    ? "bg-orange-400 text-white border-orange-400"
-                    : "bg-white text-orange-500"
+                    ? "bg-[#FF6A3D] text-white border-[#FF6A3D]"
+                    : "bg-white text-[#FF6A3D]"
                 }
               `}
             >
