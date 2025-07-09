@@ -91,16 +91,6 @@ audio,
 video {
   font-family: "Pretendard", sans-serif;
 }
-div,
-span,
-a,
-b,
-em,
-table,
-th,
-td {
-  font-size: 16px;
-}
 .container {
   max-width: 1024px;
   min-height: 600px;
@@ -111,6 +101,7 @@ td {
 }
 button {
   cursor: pointer;
+  line-height: 1;
   &:hover {
     opacity: 0.65;
   }

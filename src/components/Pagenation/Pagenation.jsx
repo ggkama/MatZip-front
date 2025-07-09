@@ -18,7 +18,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       {currentPage !== 0 && (
         <button
           onClick={() => onPageChange((p) => Math.max(p - 1, 0))}
-          className="px-3 py-1 rounded bg-gray-200"
+          className="px-3 py-2 rounded-3xl bg-gray-200"
         >
           이전
         </button>
@@ -29,7 +29,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           <button
             key={n}
             onClick={() => onPageChange(n)}
-            className={`px-3 py-1 rounded ${
+            className={`px-3 py-2 rounded-3xl ${
               n === currentPage ? "bg-orange-400 text-white" : "bg-gray-200"
             }`}
           >
@@ -41,7 +41,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       {currentPage !== totalPages - 1 && (
         <button
           onClick={() => onPageChange((p) => Math.min(p + 1, totalPages - 1))}
-          className="px-3 py-1 rounded bg-gray-200"
+          className="px-3 py-2 rounded-3xl bg-gray-200"
         >
           다음
         </button>
@@ -50,7 +50,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       {endPage < totalPages && (
         <button
           onClick={() => onPageChange(endPage)}
-          className="px-3 py-1 rounded bg-gray-200"
+          className="px-3 py-2 rounded-3xl bg-gray-200"
         >
           &hellip;
         </button>

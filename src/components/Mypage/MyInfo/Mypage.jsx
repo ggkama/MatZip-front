@@ -64,13 +64,13 @@ const MyPage = () => {
         ) : (
           <div className="w-30 h-30 bg-gray-200 rounded-full flex items-center justify-center text-3xl mb-4" />
         )}
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 mb-1">
           <strong>{userInfo.userId}</strong>{" "}
         </p>
         <p className="text-lg font-bold">{userInfo.userName}님 환영합니다.</p>
         <button
           onClick={handleLogout}
-          className="mt-2 px-4 py-1 bg-black text-white text-sm rounded"
+          className="mt-2 px-4 py-2 bg-black text-white font-semibold rounded"
         >
           로그아웃
         </button>
