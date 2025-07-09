@@ -1,6 +1,6 @@
 import KakaoLoginImage from "../../../assets/img/kakao_login_button.png";
 
-const REDIRECT_URI = "http://localhost:8080/api/auth/login/kakao";
+const REDIRECT_URI = "https://matzip.shop/api/auth/login/kakao";
 const REST_API_KEY = "e63001707d8e08b9ff740c1cbfafd939";
 
 const KakaoLoginButton = () => {
