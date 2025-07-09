@@ -18,6 +18,7 @@ const NoticeList = () => {
         setNotices(res.data.noticeList);
 
         setTotalPages(res.data.totalPages);
+        console.log(res.data);
       })
       .catch((err) => {
         console.error("공지사항 불러오기 실패:", err);
@@ -87,7 +88,7 @@ const NoticeList = () => {
           totalPages={totalPages}
           onPageChange={setPage}
         />
-        {role === "ROLE_ADMIN" && (
+        {role === "ADMIN" && (
           <button
             onClick={handleWriteClick}
             className="bg-orange-400 text-white px-4 py-2 rounded"

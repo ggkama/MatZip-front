@@ -59,8 +59,9 @@ const MyReviewsDetail = () => {
   
   const getReviewImageUrl = (url) => {
     if (!url) return "";
+
     if (url.startsWith("http")) return url;
-    if (url.startsWith("/uploads")) return `http://localhost:8080${url}`;
+    if (url.startsWith("/uploads")) return `${url}`;
     return url; 
   };
 
