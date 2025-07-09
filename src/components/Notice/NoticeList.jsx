@@ -12,30 +12,26 @@ const NoticeList = () => {
   const navi = useNavigate();
 
   useEffect(() => {
+    const storedRole = sessionStorage.getItem("userRole");
+    if (storedRole) setRole(storedRole);
+
     apiService
       .get(`/api/notice`, { params: { page: page, size: 5 } })
       .then((res) => {
         setNotices(res.data.noticeList);
-
         setTotalPages(res.data.totalPages);
-        console.log(res.data);
+
+        
+        if (res.data.currentUserRole) {
+          setRole(res.data.currentUserRole);
+          sessionStorage.setItem("userRole", res.data.currentUserRole);
+        }
       })
       .catch((err) => {
         console.error("공지사항 불러오기 실패:", err);
-      });
-
-    const raw = sessionStorage.getItem("tokens");
-    const accessToken = raw ? JSON.parse(raw).accessToken : null;
-    if (accessToken) {
-      try {
-        const decoded = jwtDecode(accessToken);
-        setRole(decoded.userRole);
-      } catch {
         setRole("");
-      }
-    } else {
-      setRole("");
-    }
+        sessionStorage.removeItem("userRole");
+      });
   }, [page]);
 
   const handleRowClick = (noticeNo) => {
@@ -52,18 +48,10 @@ const NoticeList = () => {
       <table className="w-full text-center border-t border-gray-300">
         <thead className="bg-gray-100">
           <tr className="font-semibold border-t border-gray-300">
-            <th className="py-3 px-4 border-b border-gray-300 w-16 text-[16px]">
-              번호
-            </th>
-            <th className="py-3 px-4 border-b border-gray-300 text-left text-[16px]">
-              제목
-            </th>
-            <th className="py-3 px-4 border-b border-gray-300 w-32 text-[16px]">
-              작성자
-            </th>
-            <th className="py-3 px-4 border-b border-gray-300 w-32 text-[16px]">
-              작성일
-            </th>
+            <th className="py-3 px-4 border-b border-gray-300 w-16 text-[16px]">번호</th>
+            <th className="py-3 px-4 border-b border-gray-300 text-left text-[16px]">제목</th>
+            <th className="py-3 px-4 border-b border-gray-300 w-32 text-[16px]">작성자</th>
+            <th className="py-3 px-4 border-b border-gray-300 w-32 text-[16px]">작성일</th>
           </tr>
         </thead>
         <tbody>
@@ -74,25 +62,15 @@ const NoticeList = () => {
                 onClick={() => handleRowClick(notice.noticeNo)}
                 className="cursor-pointer hover:bg-gray-50"
               >
-                <td className="py-3 px-4 border-b border-gray-200 text-[16px]">
-                  {notice.noticeNo}
-                </td>
-                <td className="py-3 px-4 border-b border-gray-200 text-left text-[16px]">
-                  {notice.noticeTitle}
-                </td>
-                <td className="py-3 px-4 border-b border-gray-200 text-[16px]">
-                  {notice.userName}
-                </td>
-                <td className="py-3 px-4 border-b border-gray-200 text-right text-[16px]">
-                  {notice.createDate}
-                </td>
+                <td className="py-3 px-4 border-b border-gray-200 text-[16px]">{notice.noticeNo}</td>
+                <td className="py-3 px-4 border-b border-gray-200 text-left text-[16px]">{notice.noticeTitle}</td>
+                <td className="py-3 px-4 border-b border-gray-200 text-[16px]">{notice.userName}</td>
+                <td className="py-3 px-4 border-b border-gray-200 text-right text-[16px]">{notice.createDate}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="4" className="py-6 text-gray-500">
-                등록된 공지사항이 없습니다.
-              </td>
+              <td colSpan="4" className="py-6 text-gray-500">등록된 공지사항이 없습니다.</td>
             </tr>
           )}
         </tbody>
@@ -104,10 +82,10 @@ const NoticeList = () => {
           totalPages={totalPages}
           onPageChange={setPage}
         />
-        {role === "ADMIN" && (
+        {role === "ROLE_ADMIN" && (
           <button
             onClick={handleWriteClick}
-            className="bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded"
+            className="bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded ml-4 mt-5"
           >
             공지사항 작성
           </button>
