@@ -11,19 +11,8 @@ const NoticeDetail = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // admin체크
-    const raw = sessionStorage.getItem("tokens");
-    const accessToken = raw ? JSON.parse(raw).accessToken : null;
-    if (accessToken) {
-      try {
-        const decoded = jwtDecode(accessToken);
-        setIsAdmin(decoded.userRole === "ROLE_ADMIN");
-      } catch {
-        setIsAdmin(false);
-      }
-    } else {
-      setIsAdmin(false);
-    }
+    const userRole = sessionStorage.getItem("userRole");
+    setIsAdmin(userRole === "ROLE_ADMIN");
   }, []);
 
   useEffect(() => {
@@ -68,6 +57,7 @@ const NoticeDetail = () => {
               목록으로 가기
             </button>
           </div>
+          {/* 관리자만 수정/삭제 가능 */}
           {isAdmin && (
             <div className="mt-6 space-x-4">
               <button
