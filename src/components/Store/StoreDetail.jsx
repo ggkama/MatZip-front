@@ -78,7 +78,9 @@ const StoreDetail = () => {
             <span className="text-[#FF6A3D]">
               <RiStarSFill size={23} />
             </span>
-            <span className="text-[16px] font-semibold">{store.star}점</span>
+            <span className="text-[16px] font-semibold">
+              {store.star ? store.star : 5}점
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-[#FF6A3D] ">
