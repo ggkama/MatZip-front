@@ -51,7 +51,7 @@ const Home = () => {
       },
     },
     created: () => {
-      console.log("🔄 최신맛집 슬라이더 초기화 완료");
+      console.log("최신맛집 슬라이더 초기화 완료");
     },
   });
 

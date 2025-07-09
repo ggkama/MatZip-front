@@ -59,7 +59,7 @@ const Header = () => {
             className="flex items-center gap-2 cursor-pointer font-extrabold text-[30px] text-white"
             onClick={() => navigate("/")}
           >
-            MatZip
+            맛집
           </div>
 
           {/* 메뉴 */}
