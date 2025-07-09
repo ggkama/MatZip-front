@@ -79,7 +79,7 @@ const StoreDetail = () => {
               <RiStarSFill size={23} />
             </span>
             <span className="text-[16px] font-semibold">
-              {store.star ? store.star : 5}점
+              5점
             </span>
           </div>
           <div className="flex items-center gap-2">
