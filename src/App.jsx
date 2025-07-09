@@ -40,19 +40,24 @@ import StoreDetail from "./components/Store/StoreDetail";
 import StoreList from "./components/Store/StoreList";
 import KakaoLogin from "./components/Member/Kakao/KakaoLogin";
 import KakaoSignup from "./components/Member/Kakao/KakaoSignup";
+import ContainerLayout from "./components/Home/ContainerLayout";
 
 function App() {
   return (
     <>
       <Header />
-      <div className="container">
-        <Routes>
-          <Route path="/" element={<StoreList />} />
+      <Routes>
+        {/* 홈: container 없이 단독 */}
+        <Route path="/" element={<Home />} />
+
+        {/* 나머지: container 적용됨 */}
+        <Route element={<ContainerLayout />}>
           <Route path="/test" element={<Test />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/result" element={<KakaoLogin />} />
           <Route path="/signup/kakao" element={<KakaoSignup />} />
+
           {/* 마이페이지 */}
           <Route path="/my-page" element={<Mypage />} />
           <Route path="/my-password" element={<PasswordInput />} />
@@ -64,15 +69,12 @@ function App() {
             element={<MyReservationDetail />}
           />
           <Route path="/account-delete" element={<AccountDelete />} />
-          <Route
-            path="/my-reservation-detail"
-            element={<MyReservationDetail />}
-          />
           <Route path="/review-form" element={<WriteReviewForm />} />
           <Route path="/my-review-list" element={<MyReviewsList />} />
           <Route path="/my-review-detail" element={<MyReviewsDetail />} />
           <Route path="/my-register-owner" element={<RegisterOwner />} />
           <Route path="/password" element={<PasswordInput />} />
+
           {/* 공지사항 */}
           <Route path="/notice" element={<NoticeList />} />
           <Route path="/notice-detail" element={<NoticeDetail />} />
@@ -88,10 +90,11 @@ function App() {
           />
           <Route path="/store-review" element={<OwnerReviewList />} />
           <Route path="/store-review-detail" element={<OwnerReviewDetail />} />
-          {/* 예약하기 */}
+
+          {/* 예약 */}
           <Route path="/reservation/:storeNo" element={<ReservationForm />} />
 
-          {/* 관리자 페이지 */}
+          {/* 관리자 */}
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/user-list" element={<UserList />} />
           <Route path="/admin/user/:userNo" element={<UserDetail />} />
@@ -104,11 +107,12 @@ function App() {
             path="/admin/review/:reivewNo"
             element={<ReviewDetailAdmin />}
           />
-          {/* 가게 상세페이지 */}
+
+          {/* 가게 */}
           <Route path="/store-detail/:storeNo" element={<StoreDetail />} />
           <Route path="/stores" element={<StoreList />} />
-        </Routes>
-      </div>
+        </Route>
+      </Routes>
       <Footer />
     </>
   );

@@ -46,15 +46,23 @@ const NoticeList = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 px-4">
-      <h2 className="text-xl font-bold text-center mb-6">공지사항</h2>
-      <table className="w-full border border-gray-300 text-center">
+    <div className="max-w-4xl mx-auto mt-10 px-4 text-sm">
+      <h2 className="text-3xl font-bold text-center mb-10">공지사항</h2>
+      <table className="w-full text-center border-t border-gray-300">
         <thead className="bg-gray-100">
-          <tr>
-            <th className="py-2 px-4 border">번호</th>
-            <th className="py-2 px-4 border">제목</th>
-            <th className="py-2 px-4 border">작성자</th>
-            <th className="py-2 px-4 border">작성일</th>
+          <tr className="font-semibold border-t border-gray-300">
+            <th className="py-3 px-4 border-b border-gray-300 w-16 text-[16px]">
+              번호
+            </th>
+            <th className="py-3 px-4 border-b border-gray-300 text-left text-[16px]">
+              제목
+            </th>
+            <th className="py-3 px-4 border-b border-gray-300 w-32 text-[16px]">
+              작성자
+            </th>
+            <th className="py-3 px-4 border-b border-gray-300 w-32 text-[16px]">
+              작성일
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -65,15 +73,23 @@ const NoticeList = () => {
                 onClick={() => handleRowClick(notice.noticeNo)}
                 className="cursor-pointer hover:bg-gray-50"
               >
-                <td className="py-2 px-4 border">{notice.noticeNo}</td>
-                <td className="py-2 px-4 border">{notice.noticeTitle}</td>
-                <td className="py-2 px-4 border">{notice.userName}</td>
-                <td className="py-2 px-4 border">{notice.createDate}</td>
+                <td className="py-3 px-4 border-b border-gray-200 text-[16px]">
+                  {notice.noticeNo}
+                </td>
+                <td className="py-3 px-4 border-b border-gray-200 text-left text-[16px]">
+                  {notice.noticeTitle}
+                </td>
+                <td className="py-3 px-4 border-b border-gray-200 text-[16px]">
+                  {notice.userName}
+                </td>
+                <td className="py-3 px-4 border-b border-gray-200 text-right text-[16px]">
+                  {notice.createDate}
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="4" className="py-4">
+              <td colSpan="4" className="py-6 text-gray-500">
                 등록된 공지사항이 없습니다.
               </td>
             </tr>
@@ -81,7 +97,7 @@ const NoticeList = () => {
         </tbody>
       </table>
 
-      <div className="flex justify-between items-center mt-6">
+      <div className="flex justify-center items-center mt-6">
         <Pagination
           currentPage={page}
           totalPages={totalPages}
@@ -90,7 +106,7 @@ const NoticeList = () => {
         {role === "ROLE_ADMIN" && (
           <button
             onClick={handleWriteClick}
-            className="bg-orange-400 text-white px-4 py-2 rounded"
+            className="bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded"
           >
             공지사항 작성
           </button>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import logo from "../../../assets/img/logo.svg";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Header = () => {
@@ -7,102 +6,121 @@ const Header = () => {
   const location = useLocation();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     const tokenInfo = sessionStorage.getItem("tokens");
-    const userRole = sessionStorage.getItem("userRole");
-
-    if (tokenInfo) {
-      setIsLoggedIn(true);
-      setRole(userRole || "");
-    } else {
-      setIsLoggedIn(false);
-      setRole("");
-    }
+    setIsLoggedIn(!!tokenInfo);
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("tokens");
-    sessionStorage.removeItem("refreshToken");
-    sessionStorage.removeItem("userRole");
-    sessionStorage.removeItem("userNo");
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
 
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleLogout = () => {
+    sessionStorage.clear();
     setIsLoggedIn(false);
-    setRole("");
+    alert("로그아웃 되었습니다.");
     navigate("/");
   };
 
-  // ROLE에 따른 마이페이지 경로 설정
-  let myPagePath = "/my-page";
-  if (role === "ROLE_OWNER") {
-    myPagePath = "/owner-page";
-  } else if (role === "ROLE_ADMIN") {
-    myPagePath = "/admin";
-  }
+  const handleMyPage = () => {
+    const storedRole = sessionStorage.getItem("userRole");
+    if (storedRole === "ROLE_OWNER") navigate("/owner-page");
+    else if (storedRole === "ROLE_ADMIN") navigate("/admin");
+    else navigate("/my-page");
+  };
+
+  // 위치 설정
+  const positionClass = isHome
+    ? isScrolled
+      ? "fixed top-0 left-0 w-full z-50"
+      : "absolute top-0 left-0 w-full z-50"
+    : "fixed top-0 left-0 w-full z-50";
+
+  // 배경색 설정
+  const bgClass = isHome && !isScrolled ? "bg-transparent" : "bg-[#FF6A3D]";
 
   return (
-    <header className="border-b border-gray-200 bg-white">
-      <div className="header-container flex justify-between items-center py-2 max-w-5xl mx-auto px-4">
-        <div
-          className="flex items-center gap-2 cursor-pointer"
-          onClick={() => navigate("/")}
-        >
-          <img src={logo} alt="MatZip" className="w-20 h-20" />
-        </div>
-        <div className="text-right text-sm">
-          {isLoggedIn ? (
-            <>
-              <span
-                className="text-black cursor-pointer"
-                onClick={() => navigate(myPagePath)}
-              >
-                마이페이지
-              </span>
-              <span className="mx-3 text-gray-300">|</span>
-              <span
-                className="text-black cursor-pointer"
-                onClick={handleLogout}
-              >
-                로그아웃
-              </span>
-            </>
-          ) : (
-            <>
-              <span
-                className="text-black cursor-pointer"
-                onClick={() => navigate("/login")}
-              >
-                로그인
-              </span>
-              <span className="mx-3 text-gray-300">|</span>
-              <span
-                className="text-black cursor-pointer"
-                onClick={() => navigate("/signup")}
-              >
-                회원가입
-              </span>
-            </>
-          )}
-        </div>
-      </div>
-
-      <nav className="bg-orange-500">
-        <ul className="flex justify-center gap-16 text-white font-semibold text-xl py-4">
-          <li
-            className="hover:underline cursor-pointer"
+    <header
+      className={`${positionClass} h-[75px] transition-colors duration-300 ${bgClass}`}
+    >
+      <nav>
+        <div className="header-container flex justify-between items-center py-2 max-w-5xl mx-auto">
+          {/* 로고 */}
+          <div
+            className="flex items-center gap-2 cursor-pointer font-extrabold text-[30px] text-white"
             onClick={() => navigate("/")}
           >
-            HOME
-          </li>
-          
-          <li
-            className="hover:underline cursor-pointer"
-            onClick={() => navigate("/notice")}
-          >
-            공지사항
-          </li>
-        </ul>
+            MatZip
+          </div>
+
+          {/* 메뉴 */}
+          <ul className="flex justify-center gap-16 font-medium text-[18px] py-4 text-white">
+            <li
+              className="relative cursor-pointer font-semibold after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-white after:transition-all after:duration-300 hover:after:w-full"
+              onClick={() => navigate("/")}
+            >
+              HOME
+            </li>
+            <li
+              className="relative cursor-pointer font-semibold after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-white after:transition-all after:duration-300 hover:after:w-full"
+              onClick={() => navigate("/stores")}
+            >
+              STORE
+            </li>
+            <li
+              className="relative cursor-pointer font-semibold after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-white after:transition-all after:duration-300 hover:after:w-full"
+              onClick={() => navigate("/notice")}
+            >
+              NOTICE
+            </li>
+          </ul>
+
+          {/* 로그인 / 마이페이지 */}
+          <div className="text-right text-[16px] font-semibold text-white">
+            {isLoggedIn ? (
+              <>
+                <span
+                  className="cursor-pointer hover:opacity-65"
+                  onClick={handleMyPage}
+                >
+                  마이페이지
+                </span>
+                <span className="mx-3">|</span>
+                <span
+                  className="cursor-pointer hover:opacity-65"
+                  onClick={handleLogout}
+                >
+                  로그아웃
+                </span>
+              </>
+            ) : (
+              <>
+                <span
+                  className="cursor-pointer hover:opacity-65"
+                  onClick={() => navigate("/login")}
+                >
+                  로그인
+                </span>
+                <span className="mx-3 text-white">|</span>
+                <span
+                  className="cursor-pointer hover:opacity-65"
+                  onClick={() => navigate("/signup")}
+                >
+                  회원가입
+                </span>
+              </>
+            )}
+          </div>
+        </div>
       </nav>
     </header>
   );
