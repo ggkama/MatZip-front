@@ -7,14 +7,20 @@ const ImageSection = ({
   deletedImagePaths,
   setDeletedImagePaths,
   initialImages,
+  changedImages,
+  setChangedImages,
+  isEdit,
 }) => (
   <ImageUploader
+    isEdit={isEdit}
     images={images}
     setImages={setImages}
     setError={setError}
     deletedImagePaths={deletedImagePaths}
     setDeletedImagePaths={setDeletedImagePaths}
     initialImages={initialImages}
+    changedImages={changedImages}
+    setChangedImages={setChangedImages}
   />
 );
 

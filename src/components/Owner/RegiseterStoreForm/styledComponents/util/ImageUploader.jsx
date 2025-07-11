@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const ImageUploader = ({
   images,
@@ -7,16 +7,46 @@ const ImageUploader = ({
   deletedImagePaths,
   setDeletedImagePaths,
   initialImages = [],
+  changedImages,
+  setChangedImages,
+  isEdit,
 }) => {
+  const [lastDeletedImagePath, setLastDeletedImagePath] = useState(null);
+
   const handleChange = (e) => {
     const selected = Array.from(e.target.files);
     const total = [...images, ...selected];
-    if (total.length + initialImages.length > 5) {
+
+    const remainingInitialImages = initialImages.filter(
+      (path) => !deletedImagePaths.includes(path)
+    );
+    const totalImageCount = remainingInitialImages.length + total.length;
+
+    // 등록 모드일 경우에만 1장 이상 필수 검사
+    if (!isEdit && (totalImageCount < 1 || totalImageCount > 5)) {
+      setError("이미지는 최소 1장 이상, 최대 5장까지 등록 가능합니다.");
+      return;
+    }
+
+    if (totalImageCount > 5) {
       setError("이미지는 최대 5장까지 등록 가능합니다.");
       return;
     }
+
     setImages(total);
     setError(null);
+
+    if (lastDeletedImagePath && selected.length === 1) {
+      setChangedImages((prev) => [
+        ...prev,
+        {
+          oldImage: lastDeletedImagePath,
+          newImage: selected[0],
+        },
+      ]);
+      setLastDeletedImagePath(null);
+    }
+
     e.target.value = null;
   };
 
@@ -28,6 +58,7 @@ const ImageUploader = ({
 
   const handleRemoveInitial = (imagePath) => {
     setDeletedImagePaths((prev) => [...prev, imagePath]);
+    setLastDeletedImagePath(imagePath); // 최근 삭제된 이미지로 저장
   };
 
   return (

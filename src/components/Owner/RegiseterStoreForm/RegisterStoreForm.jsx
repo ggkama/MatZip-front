@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import SubmitButton from "./styledComponents/util/SubmitButton";
+import axiosInstance from "../../../api/axiosInstance";
+
+// 유틸 함수
 import {
   formatPhoneNumber,
   isValidPhoneNumber,
 } from "./styledComponents/js/phone";
 
-// 분리된 섹션 컴포넌트
+// 섹션 컴포넌트
+import SubmitButton from "./styledComponents/util/SubmitButton";
 import StoreNameSection from "./styledComponents/parts/StoreNameSection";
 import AddressSection from "./styledComponents/parts/AddressSection";
 import FoodtypeSection from "./styledComponents/parts/FoodtypeSection";
@@ -18,7 +21,6 @@ import MenuSection from "./styledComponents/parts/MenuSection";
 import CapacitySection from "./styledComponents/parts/CapacitySection";
 import ImageSection from "./styledComponents/parts/ImageSection";
 import RegionSection from "./styledComponents/parts/RegionSection";
-import axiosInstance from "../../../api/axiosInstance";
 
 const RegisterStoreForm = () => {
   const navi = useNavigate();
@@ -26,6 +28,7 @@ const RegisterStoreForm = () => {
   const initialData = location.state?.initialData || null;
   const isEdit = !!initialData;
 
+  // 상태값
   const [storeName, setStoreName] = useState(initialData?.storeName || "");
   const [categoryAddress, setCategoryAddress] = useState(
     initialData?.categoryAddress || ""
@@ -52,18 +55,21 @@ const RegisterStoreForm = () => {
   const [dayOff, setDayOff] = useState(initialData?.dayOff || []);
   const [startDate, setStartDate] = useState(initialData?.startDate || null);
   const [endDate, setEndDate] = useState(initialData?.endDate || null);
-  const [images, setImages] = useState([]);
-  const [deletedImagePaths, setDeletedImagePaths] = useState([]);
   const [menuName, setMenuName] = useState(
     initialData?.menuList?.join(", ") || ""
   );
   const [menuList, setMenuList] = useState([]);
+  const [count, setCount] = useState(initialData?.count || "");
+
+  const [images, setImages] = useState([]); // 새로 추가된 이미지
+  const [imageList, setImageList] = useState(initialData?.imageList || []); // 기존 이미지
+  const [deletedImagePaths, setDeletedImagePaths] = useState([]); // 삭제된 기존 이미지
+  const [changedImages, setChangedImages] = useState([]); // 교체된 이미지 old-new 쌍
+
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [count, setCount] = useState(initialData?.count || "");
-  const [imageList, setImageList] = useState(initialData?.imageList || []);
-  const [changedImages, setChangedImages] = useState([]);
 
+  // 메뉴 문자열 → 배열 변환
   useEffect(() => {
     const items =
       typeof menuName === "string"
@@ -75,18 +81,21 @@ const RegisterStoreForm = () => {
     setMenuList(items);
   }, [menuName]);
 
+  // 편의시설 토글 핸들러
   const handleConvenienceToggle = (value) => {
     setCategoryConvenience((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
   };
 
+  // 정기휴무일 토글 핸들러
   const handleDayToggle = (value) => {
     setDayOff((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
   };
 
+  // 유효성 검사
   const validate = () => {
     if (
       !storeName ||
@@ -102,26 +111,32 @@ const RegisterStoreForm = () => {
       setError("모든 필수 항목을 입력해주세요.");
       return false;
     }
+
     if (!isValidPhoneNumber(storePhone)) {
       setError("전화번호 형식을 확인해주세요. 예: 02-1234-5678");
       return false;
     }
+
     const timeRegex = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
     if (!timeRegex.test(openTime) || !timeRegex.test(closeTime)) {
       setError("영업시간은 HH:mm 형식으로 입력해주세요.");
       return false;
     }
+
     if (!count || count <= 0) {
       setError("시간당 수용 인원을 입력해주세요.");
       return false;
     }
+
     if (!isEdit && (images.length < 1 || images.length > 5)) {
       setError("이미지는 최소 1장 이상, 최대 5장까지 등록 가능합니다.");
       return false;
     }
+
     return true;
   };
 
+  // 제출 처리
   const handleSubmit = () => {
     if (!validate()) return;
 
@@ -159,13 +174,16 @@ const RegisterStoreForm = () => {
         type: "application/json",
       })
     );
+
     changedImages.forEach(({ oldImage, newImage }) => {
       formData.append("changedOldImages", oldImage);
       formData.append("changedNewImages", newImage);
     });
+
     images.forEach((image) => {
-      if (image instanceof File && image.size > 0)
+      if (image instanceof File && image.size > 0) {
         formData.append("images", image);
+      }
     });
 
     const request = isEdit
@@ -188,11 +206,13 @@ const RegisterStoreForm = () => {
       });
   };
 
+  // 렌더링
   return (
     <div className="pt-10 pb-20">
       <h2 className="text-3xl font-bold mb-8 text-center">
         {isEdit ? "가게 정보 수정" : "가게 정보 등록"}
       </h2>
+
       <div className="space-y-4 flex flex-col w-[500px] mx-auto">
         <span className="text-sm text-gray-500">* 표시는 필수입니다.</span>
 
@@ -235,6 +255,7 @@ const RegisterStoreForm = () => {
         <MenuSection menuName={menuName} setMenuName={setMenuName} />
         <CapacitySection count={count} setCount={setCount} />
         <ImageSection
+          isEdit={isEdit}
           images={images}
           setImages={setImages}
           setError={setError}
@@ -243,13 +264,17 @@ const RegisterStoreForm = () => {
           initialImages={
             Array.isArray(initialData?.imageList) ? initialData.imageList : []
           }
+          changedImages={changedImages}
+          setChangedImages={setChangedImages}
         />
+
         {error && <p className="text-red-500 text-sm">{error}</p>}
         {success && (
           <p className="text-green-600 text-sm">
             {isEdit ? "수정이 완료되었습니다." : "등록이 완료되었습니다."}
           </p>
         )}
+
         <SubmitButton onClick={handleSubmit} />
       </div>
     </div>
